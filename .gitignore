@@ -1,10 +1,9 @@
 # cronicle
-cronicle/app/*
-cronicle/data/*
-cronicle/data/_cleanup
-cronicle/data/_temp
-cronicle/logs/*
-cronicle/plugins/*
+cronicle/app/*/
+cronicle/data/*/
+cronicle/data/.setup_done
+cronicle/logs/*/
+cronicle/plugins/*/
 
 # postgresql
 postgresql/data

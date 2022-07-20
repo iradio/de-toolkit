@@ -12,10 +12,10 @@ services:
       - "./airflow/init_airflow_db.sql:/docker-entrypoint-initdb.d/init_airflow_db.sql"
       - "./metabase/init_metabase_db.sql:/docker-entrypoint-initdb.d/init_metabase_db.sql"
     restart: unless-stopped
-#    environment:
-#      - POSTGRESQL_DATABASE=airflow
-#      - POSTGRESQL_USERNAME=bn_airflow
-#      - POSTGRESQL_PASSWORD=bitnami1
+    environment:
+      - POSTGRESQL_DATABASE=de
+      - POSTGRESQL_USERNAME=de_user
+      - POSTGRESQL_PASSWORD=de_pass
 # airflow (depends on postgresql)
   redis:
     image: 'bitnami/redis:latest'

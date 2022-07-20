@@ -14,7 +14,7 @@ airflow/dags/*.py
 
 # metabase
 metabase/data/*/
-metabase/plugins/*/
+metabase/plugins/*.jar
 
 
 ## Ignore Visual Studio temporary files, build results, and

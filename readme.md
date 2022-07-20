@@ -11,7 +11,9 @@
 - `docker-compose`
 
 Windows - [Docker Desktop with WSL 2 backend](https://docs.docker.com/desktop/windows/wsl/)
+
 Mac - [Docker Desktop on Mac](https://docs.docker.com/desktop/install/mac-install/)
+
 Linux - [Docker Desktop on Linux](https://docs.docker.com/desktop/install/linux-install/)
 
 ## Быстрый старт

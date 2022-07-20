@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+# postgresql
+  postgresql:
+    image: 'bitnami/postgresql:latest'
+    container_name: postgresql
+    hostname: postgresql
+    ports:
+      - '5432:5432'
+    volumes:
+      - "./postgresql/data:/bitnami/postgresql"
+#      - "./airflow/init_airflow_db.sql:/docker-entrypoint-initdb.d/init_airflow_db.sql"
+      - "./metabase/init_metabase_db.sql:/docker-entrypoint-initdb.d/init_metabase_db.sql"
+# cronicle
+  cronicle:
+    image: bluet/cronicle-docker:latest
+    container_name: cronicle
+    hostname: cronicle
+    ports:
+      - "3012:3012" 
+    restart: unless-stopped
+    volumes:
+      - "./cronicle/data/:/opt/cronicle/data:rw"
+      - "./cronicle/logs:/opt/cronicle/logs:rw"
+      - "./cronicle/plugins:/opt/cronicle/plugins:rw"
+      - "./cronicle/app:/app:rw"
+    environment:
+      - CRONICLE_WebServer__http_port=3012
+      - CRONICLE_server_comm_use_hostnames=1
+# metabase
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: metabase
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./metabase/plugins:/plugins"
+      - "./metabase/data:/metabase-data"
+    environment:
+      - MB_DB_TYPE=postgresql
+      - MB_DB_DBNAME=metabase
+      - MB_DB_PORT=5432
+      - MB_DB_USER=de_user
+      - MB_DB_PASS=de_pass
+      - MB_DB_HOST=postgreql

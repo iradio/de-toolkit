@@ -1,0 +1,9 @@
+# install additional python custom Python modules to Aiflow on start-up
+
+# example
+#matplotlib>=2.2
+#numpy>=1.15.0, <1.21.0
+#pandas
+#pytest==4.0.1
+
+petl 

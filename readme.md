@@ -16,6 +16,9 @@ Mac - [Docker Desktop on Mac](https://docs.docker.com/desktop/install/mac-instal
 
 Linux - [Docker Desktop on Linux](https://docs.docker.com/desktop/install/linux-install/)
 
+Достаточный объем доступной docker оперативной памяти. Нужно 4GB+ .Можно проверить командой:
+``` docker run --rm "debian:bullseye-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))' ```
+
 ## Быстрый старт
 ``` bash
 git clone https://github.com/iradio/de-toolkit.git

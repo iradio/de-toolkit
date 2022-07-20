@@ -1,0 +1,97 @@
+version: '3'
+
+services:
+  postgresql:
+    image: 'bitnami/postgresql:latest'
+    container_name: postgresql
+    hostname: postgresql
+    ports:
+      - '15432:5432'
+    volumes:
+      - "./postgresql/data:/bitnami/postgresql"
+      - "./airflow/init_airflow_db.sql:/docker-entrypoint-initdb.d/init_airflow_db.sql"
+      - "./metabase/init_metabase_db.sql:/docker-entrypoint-initdb.d/init_metabase_db.sql"
+    restart: unless-stopped
+#    environment:
+#      - POSTGRESQL_DATABASE=airflow
+#      - POSTGRESQL_USERNAME=bn_airflow
+#      - POSTGRESQL_PASSWORD=bitnami1
+# airflow (depends on postgresql)
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - /path/to/redis-persistence:/bitnami
+  airflow-worker:
+    image: bitnami/airflow-worker:latest
+    depends_on:
+      - postgresql
+      - redis
+    volumes:
+      - "./airflow/dags:/opt/bitnami/airflow/dags"
+      - "./airflow/dags/requirements.txt:/bitnami/python/requirements.txt"
+    environment:
+      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_EXECUTOR=CeleryExecutor
+      - AIRFLOW_DATABASE_HOST=postgresql
+      - AIRFLOW_DATABASE_NAME=airflow
+      - AIRFLOW_DATABASE_USERNAME=de_user
+      - AIRFLOW_DATABASE_PASSWORD=de_pass
+      - AIRFLOW_LOAD_EXAMPLES=yes
+  airflow-scheduler:
+    image: bitnami/airflow-scheduler:latest
+    depends_on:
+      - postgresql
+      - redis
+    volumes:
+      - "./airflow/dags:/opt/bitnami/airflow/dags"
+      - "./airflow/dags/requirements.txt:/bitnami/python/requirements.txt"
+    environment:
+      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_EXECUTOR=CeleryExecutor
+      - AIRFLOW_DATABASE_HOST=postgresql
+      - AIRFLOW_DATABASE_NAME=airflow
+      - AIRFLOW_DATABASE_USERNAME=de_user
+      - AIRFLOW_DATABASE_PASSWORD=de_pass
+      - AIRFLOW_LOAD_EXAMPLES=yes
+  airflow:
+    image: bitnami/airflow:latest
+    depends_on:
+      - postgresql
+      - redis    
+    volumes:
+      - "./airflow/dags:/opt/bitnami/airflow/dags"
+      - "./airflow/dags/requirements.txt:/bitnami/python/requirements.txt"
+    environment:
+      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_EXECUTOR=CeleryExecutor
+      - AIRFLOW_DATABASE_HOST=postgresql
+      - AIRFLOW_DATABASE_NAME=airflow
+      - AIRFLOW_DATABASE_USERNAME=de_user
+      - AIRFLOW_DATABASE_PASSWORD=de_pass
+      - AIRFLOW_PASSWORD=de_pass
+      - AIRFLOW_USERNAME=de_user
+      - AIRFLOW_EMAIL=user@example.com
+    ports:
+      - '8080:8080'
+# metabase
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: metabase
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./metabase/plugins:/plugins"
+      - "./metabase/data:/metabase-data"
+    environment:
+      - MB_DB_TYPE=postgresql
+      - MB_DB_DBNAME=metabasedb
+      - MB_DB_PORT=5432
+      - MB_DB_USER=de_user
+      - MB_DB_PASS=de_pass
+      - MB_DB_HOST=postgreql

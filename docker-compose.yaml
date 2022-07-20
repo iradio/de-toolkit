@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  cronicle:
+    image: bluet/cronicle-docker:latest
+    container_name: cronicle
+    hostname: cronicle
+    ports:
+      - "3012:3012" 
+    restart: unless-stopped
+    volumes:
+      - "./cronicle/data/:/opt/cronicle/data:rw"
+      - "./cronicle/logs:/opt/cronicle/logs:rw"
+      - "./cronicle/plugins:/opt/cronicle/plugins:rw"
+      - "./cronicle/app:/app:rw"

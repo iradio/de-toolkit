@@ -16,20 +16,34 @@ Mac - [Docker Desktop on Mac](https://docs.docker.com/desktop/install/mac-instal
 
 Linux - [Docker Desktop on Linux](https://docs.docker.com/desktop/install/linux-install/)
 
-Достаточный объем доступной docker оперативной памяти. Нужно 4GB+ .Можно проверить командой:
-``` docker run --rm "debian:bullseye-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))' ```
+Достаточный объем доступной docker оперативной памяти. Нужно более 4GB. 
+
+Можно проверить командой:
+
+``` bash
+docker run --rm "debian:bullseye-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))' 
+```
 
 ## Быстрый старт
+Сборка: Cronicle + Postgres + Metabase
 ``` bash
 git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
-docker-compose up
+docker-compose up docker-compose_cronicle_pg_metabase.yml
 ```
 
+Сборка: Airflow + Postgres + Metabase
+``` bash
+git clone https://github.com/iradio/de-toolkit.git
+cd de-toolkit
+docker-compose up docker-compose_airflow_pg_metabase.yml
+```
 
-## Сборки инструментов
-1. Airflow + PostgersSQL 
+## Defaults 
 
+username: `de_user`
+
+password: `de_pass`
 
 ## ПО, включенное в сборку
 ### СУБД
@@ -47,7 +61,7 @@ docker-compose up
 * L(oad) *todo*
 
 ### BI
-* Metabase *todo*
+* Metabase
 * Superset *todo*
 
 ## Авторы

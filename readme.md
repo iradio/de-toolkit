@@ -25,12 +25,17 @@ docker run --rm "debian:bullseye-slim" bash -c 'numfmt --to iec $(echo $(($(getc
 ```
 
 ## Быстрый старт
-Сборка: Cronicle + Postgres + Metabase
+### Сборка: Cronicle + Postgres + Metabase
 ``` bash
 git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
 docker-compose up docker-compose_cronicle_pg_metabase.yml
 ```
+Cronicle: http://localhost:3012 admin/admin
+
+Postgres: localhost:5432/de de_user/de_pass
+
+Metabase: http://localhost:3000
 
 Сборка: Airflow + Postgres + Metabase
 ``` bash
@@ -38,6 +43,11 @@ git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
 docker-compose up docker-compose_airflow_pg_metabase.yml
 ```
+Airflow: http://localhot:8080 de_user/de_pass
+
+Postgres: localhost:5432/de pg_user/pg_pass
+
+Metabase: http://localhost:3000
 
 ## Defaults 
 

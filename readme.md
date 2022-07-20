@@ -37,7 +37,7 @@ Postgres: localhost:5432/de de_user/de_pass
 
 Metabase: http://localhost:3000
 
-Сборка: Airflow + Postgres + Metabase
+### Сборка: Airflow + Postgres + Metabase
 ``` bash
 git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
@@ -57,22 +57,26 @@ password: `de_pass`
 
 ## ПО, включенное в сборку
 ### СУБД
-* PostgreSQL
-* MongoDB *todo*
+```
+├── PostgreSQL
+├── MongoDB *todo*
+```
 ### ETL
-* Комплексные ETL | ELT
-* * Airflow
-* * Cronicle
-* * Luigi *todo*
-* * StreamSets *todo*
-* E(xtract) *todo*
-* T(ransform) *todo*
-* * dbt *todo*
-* L(oad) *todo*
-
+```
+├── Комплексные ETL | ELT
+│   ├── Airflow
+│   ├── Cronicle
+│   ├── Luigi *todo*
+│   ├── StreamSets *todo*
+├── E(xtract) *todo*
+├── T(ransform) *todo*
+│   ├── dbt *todo*
+├── L(oad) *todo*
+```
 ### BI
-* Metabase
-* Superset *todo*
-
+```
+├── Metabase
+├── Superset *todo*
+```
 ## Авторы
 - Тимур Алейников - [iradio](https://github.com/iradio)

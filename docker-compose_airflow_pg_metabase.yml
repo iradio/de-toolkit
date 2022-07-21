@@ -9,7 +9,7 @@ services:
     volumes:
       - "./airflow/redis:/bitnami/redis"
   airflow-worker:
-    image: bitnami/airflow-worker:latest
+    image: bitnami/airflow-worker:${AIRFLOW_VERSION:-latest}
     depends_on:
       - postgresql
       - redis
@@ -26,7 +26,7 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_LOAD_EXAMPLES=yes
   airflow-scheduler:
-    image: bitnami/airflow-scheduler:latest
+    image: bitnami/airflow-scheduler:${AIRFLOW_VERSION:-latest}
     depends_on:
       - postgresql
       - redis
@@ -43,7 +43,7 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_LOAD_EXAMPLES=yes
   airflow:
-    image: bitnami/airflow:latest
+    image: bitnami/airflow:${AIRFLOW_VERSION:-latest}
     depends_on:
       - postgresql
       - redis    
@@ -65,7 +65,7 @@ services:
       - '8080:8080'
 # postgresql
   postgresql:
-    image: 'bitnami/postgresql:latest'
+    image: 'bitnami/postgresql:${PG_VERSION:-latest}'
     container_name: postgresql
     hostname: postgresql
     ports:
@@ -81,7 +81,7 @@ services:
       - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}
 # metabase
   metabase:
-    image: metabase/metabase:latest
+    image: metabase/metabase:${METABASE_VERSION:-latest}
     container_name: metabase
     depends_on:
       - postgresql

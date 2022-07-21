@@ -11,6 +11,7 @@ postgresql/data/*/
 # airflow
 airflow/dags/*/
 airflow/dags/*.py
+airflow/redis/*/
 
 # metabase
 metabase/data/*/

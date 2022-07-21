@@ -56,7 +56,7 @@ Metabase: http://localhost:3000 *will create user on first start*
 ``` bash
 git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
-docker-compose up docker-compose_airbyte_pg_dbt_metabase.yml
+docker-compose up docker-compose_airbyte_pg_metabase.yml
 ```
 Airbyte: http://localhot:8080 *set user on first start*
 

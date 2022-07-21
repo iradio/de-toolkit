@@ -3,7 +3,7 @@ version: '3'
 services:
 # cronicle
   cronicle:
-    image: bluet/cronicle-docker:latest
+    image: bluet/cronicle-docker:${CRONICLE_VERSION:-latest}
     container_name: cronicle
     hostname: cronicle
     ports:
@@ -19,13 +19,15 @@ services:
       - CRONICLE_server_comm_use_hostnames=1
 # postgresql
   postgresql:
-    image: 'bitnami/postgresql:latest'
+    image: 'bitnami/postgresql:${PG_VERSION:-latest}'
     container_name: postgresql
     hostname: postgresql
     ports:
       - '5432:5432'
     volumes:
       - "./postgresql/data:/bitnami/postgresql"
+#      - "./airflow/1_create_de_user_d.sql:/docker-entrypoint-initdb.d/1_create_de_user_db.sql"
+#      - "./airflow/create_airflow_db.sql:/docker-entrypoint-initdb.d/create_airflow_db.sql"
       - "./metabase/create_metabase_db.sql:/docker-entrypoint-initdb.d/create_metabase_db.sql"
     environment:
       - POSTGRESQL_DATABASE=${DE_DB_NAME:-de}
@@ -33,7 +35,7 @@ services:
       - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}
 # metabase
   metabase:
-    image: metabase/metabase:latest
+    image: metabase/metabase:${METABASE_VERSION:-latest}
     container_name: metabase
     depends_on:
       - postgresql

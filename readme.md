@@ -31,11 +31,11 @@ git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
 docker-compose up docker-compose_cronicle_pg_metabase.yml
 ```
-Cronicle: http://localhost:3012 admin/admin
+Cronicle: http://localhost:8080 admin/admin
 
-Postgres: localhost:5432/de de_user/de_pass
+Postgres: postgresql://pg_user:pg_pass@localhost:5432/de
 
-Metabase: http://localhost:3000
+Metabase: http://localhost:3000 *will create user on first start*
 
 ### Сборка: Airflow + Postgres + Metabase
 ``` bash
@@ -45,9 +45,9 @@ docker-compose up docker-compose_airflow_pg_metabase.yml
 ```
 Airflow: http://localhot:8080 de_user/de_pass
 
-Postgres: localhost:5432/de pg_user/pg_pass
+Postgres: postgresql://pg_user:pg_pass@localhost:5432/de 
 
-Metabase: http://localhost:3000
+Metabase: http://localhost:3000 *will create user on first start*
 
 ## Defaults 
 

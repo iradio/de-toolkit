@@ -7,7 +7,7 @@ services:
     container_name: cronicle
     hostname: cronicle
     ports:
-      - "3012:3012" 
+      - "8080:3012" 
     restart: unless-stopped
     volumes:
       - "./cronicle/data/:/opt/cronicle/data:rw"

@@ -75,8 +75,9 @@ password: `de_pass`
 ```
 ├── PostgreSQL
 ├── MongoDB *todo*
+├── ClickHouse
 ```
-### ETL
+### ETL | ELT
 ```
 ├── Комплексные ETL | ELT
 │   ├── Airflow
@@ -84,10 +85,11 @@ password: `de_pass`
 │   ├── Luigi *todo*
 │   ├── StreamSets *todo*
 ├── E(xtract) *todo*
-│   ├── Airbyte *todo*
+│   ├── Airbyte
+├── L(oad) *todo*
+│   ├── Airbyte
 ├── T(ransform) *todo*
 │   ├── dbt *todo*
-├── L(oad) *todo*
 ```
 ### BI
 ```

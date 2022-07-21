@@ -14,6 +14,8 @@ services:
       - HACK_LOCAL_ROOT_PARENT=${HACK_LOCAL_ROOT_PARENT}
     volumes:
       - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
   bootloader:
     image: airbyte/bootloader:${VERSION}
 #    logging: *default-logging
@@ -28,6 +30,8 @@ services:
       - DATABASE_USER=${DATABASE_USER}
       - LOG_LEVEL=${LOG_LEVEL}
       - RUN_DATABASE_MIGRATION_ON_STARTUP=${RUN_DATABASE_MIGRATION_ON_STARTUP}
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
   db:
     image: airbyte/db:${VERSION}
 #    logging: *default-logging
@@ -44,6 +48,8 @@ services:
       - POSTGRES_USER=${DATABASE_USER}
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
   worker:
     image: airbyte/worker:${VERSION}
 #    logging: *default-logging
@@ -91,10 +97,13 @@ services:
       - ACTIVITY_MAX_DELAY_BETWEEN_ATTEMPTS_SECONDS=${ACTIVITY_MAX_DELAY_BETWEEN_ATTEMPTS_SECONDS}
       - WORKFLOW_FAILURE_RESTART_DELAY_SECONDS=${WORKFLOW_FAILURE_RESTART_DELAY_SECONDS}
       - USE_STREAM_CAPABLE_STATE=${USE_STREAM_CAPABLE_STATE}
+      - DOCKER_NETWORK=${DOCKER_NETWORK}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - workspace:${WORKSPACE_ROOT}
       - ${LOCAL_ROOT}:${LOCAL_ROOT}
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
   server:
     image: airbyte/server:${VERSION}
 #    logging: *default-logging
@@ -130,13 +139,15 @@ services:
       - workspace:${WORKSPACE_ROOT}
       - data:${CONFIG_ROOT}
       - ${LOCAL_ROOT}:${LOCAL_ROOT}
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
   webapp:
     image: airbyte/webapp:${VERSION}
 #    logging: *default-logging
     container_name: airbyte-webapp
     restart: unless-stopped
     ports:
-      - 8000:80
+      - 8080:80
     environment:
       - AIRBYTE_ROLE=${AIRBYTE_ROLE:-}
       - AIRBYTE_VERSION=${VERSION}
@@ -147,6 +158,8 @@ services:
       - OPENREPLAY=${OPENREPLAY:-}
       - PAPERCUPS_STORYTIME=${PAPERCUPS_STORYTIME:-}
       - TRACKING_STRATEGY=${TRACKING_STRATEGY}
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
   airbyte-temporal:
     image: airbyte/temporal:${VERSION}
 #    logging: *default-logging
@@ -164,17 +177,22 @@ services:
       - POSTGRES_USER=${DATABASE_USER}
     volumes:
       - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
-# dbt
-
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
+# dbt runs by airbyte to transform the data. Check airbyte's UI
 # postgresql
   postgresql:
-    image: 'bitnami/postgresql:latest'
+    image: 'bitnami/postgresql:${PG_VERSION:-latest}'
     container_name: postgresql
     hostname: postgresql
     ports:
       - '5432:5432'
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
     volumes:
       - "./postgresql/data:/bitnami/postgresql"
+#      - "./airflow/1_create_de_user_d.sql:/docker-entrypoint-initdb.d/1_create_de_user_db.sql"
+#      - "./airflow/create_airflow_db.sql:/docker-entrypoint-initdb.d/create_airflow_db.sql"
       - "./metabase/create_metabase_db.sql:/docker-entrypoint-initdb.d/create_metabase_db.sql"
     environment:
       - POSTGRESQL_DATABASE=${DE_DB_NAME:-de}
@@ -182,13 +200,15 @@ services:
       - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}
 # metabase
   metabase:
-    image: metabase/metabase:latest
+    image: metabase/metabase:${METABASE_VERSION:-latest}
     container_name: metabase
     depends_on:
       - postgresql
     hostname: metabase
     ports:
       - "3000:3000"
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
     volumes:
       - "./metabase/plugins:/plugins"
       - "./metabase/data:/metabase-data"
@@ -200,6 +220,12 @@ services:
       - MB_DB_PASS=${DE_PASSWORD:-de_pass}
       - MB_DB_HOST=postgresql
 
+networks:
+  de-toolkit-net:
+#    external: true
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+#    driver: bridge
+  
 volumes:
   workspace:
     name: ${WORKSPACE_DOCKER_MOUNT}

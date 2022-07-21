@@ -52,6 +52,18 @@ Postgres: postgresql://pg_user:pg_pass@localhost:5432/de
 
 Metabase: http://localhost:3000 *will create user on first start*
 
+### Сборка: Airbyte + Postgres + Metabase
+``` bash
+git clone https://github.com/iradio/de-toolkit.git
+cd de-toolkit
+docker-compose up docker-compose_airbyte_pg_dbt_metabase.yml
+```
+Airbyte: http://localhot:8080 *set user on first start*
+
+Postgres: postgresql://pg_user:pg_pass@localhost:5432/de 
+
+Metabase: http://localhost:3000 *set user on first start*
+
 ## Defaults 
 
 username: `de_user`

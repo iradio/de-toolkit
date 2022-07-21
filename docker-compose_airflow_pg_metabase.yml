@@ -6,7 +6,7 @@ services:
     container_name: postgresql
     hostname: postgresql
     ports:
-      - '15432:5432'
+      - '5432:5432'
     volumes:
       - "./postgresql/data:/bitnami/postgresql"
       - "./airflow/init_airflow_db.sql:/docker-entrypoint-initdb.d/init_airflow_db.sql"
@@ -22,7 +22,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
-      - /path/to/redis-persistence:/bitnami
+      - "./airflow/redis:/bitnami/redis"
   airflow-worker:
     image: bitnami/airflow-worker:latest
     depends_on:
@@ -82,6 +82,8 @@ services:
   metabase:
     image: metabase/metabase:latest
     container_name: metabase
+    depends_on:
+      - postgresql
     hostname: metabase
     ports:
       - "3000:3000"
@@ -89,9 +91,9 @@ services:
       - "./metabase/plugins:/plugins"
       - "./metabase/data:/metabase-data"
     environment:
-      - MB_DB_TYPE=postgresql
-      - MB_DB_DBNAME=metabasedb
+      - MB_DB_TYPE=postgres
+      - MB_DB_DBNAME=metabase
       - MB_DB_PORT=5432
       - MB_DB_USER=de_user
       - MB_DB_PASS=de_pass
-      - MB_DB_HOST=postgreql
+      - MB_DB_HOST=postgresql

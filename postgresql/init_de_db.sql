@@ -17,6 +17,6 @@ BEGIN
 END
 $do$;
 
-create database airflow with owner de_user;
+create database de with owner de_user;
 
-grant all privileges on database airflow to de_user;
+grant all privileges on database de to de_user;

@@ -78,7 +78,7 @@ docker-compose up docker-compose_airbyte_pg_metabase.yml
 ```
 Airbyte: http://localhot:8080 *set user on first start*
 
-Postgres: postgresql://pg_user:pg_pass@localhost:5432/de 
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`
 
 Metabase: http://localhost:3000 *set user on first start*
 

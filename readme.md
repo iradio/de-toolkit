@@ -66,7 +66,7 @@ Metabase: http://localhost:3000 *will create user on first start*
 ``` bash
 docker-compose up docker-compose_airflow_pg_metabase.yml
 ```
-Airflow: http://localhot:8080 `de_user`/`de_pass`
+Airflow: http://localhost:8080 `de_user`/`de_pass`
 
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de` 
 
@@ -76,11 +76,22 @@ Metabase: http://localhost:3000 *will create user on first start*
 ``` bash
 docker-compose up docker-compose_airbyte_pg_metabase.yml
 ```
-Airbyte: http://localhot:8080 *set user on first start*
+Airbyte: http://localhost:8080 *set user on first start*
 
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`
 
 Metabase: http://localhost:3000 *set user on first start*
+
+### Сборка: Spark + Postgres + Metabase
+``` bash
+docker-compose up docker-compose_spark_pg_metabase.yml
+```
+Spark: http://localhost:8080 *no auth* use check [spark/readme.md](./spark/readme.md)
+
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`
+
+Metabase: http://localhost:3000 *set user on first start*
+
 
 
 ## Defaults 

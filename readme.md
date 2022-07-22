@@ -81,6 +81,14 @@ Spark: http://localhost:8080 *no auth* use check [spark/readme.md](./spark/readm
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *set user on first start*
 
+### Сборка: Prefect + Postgres + Metabase
+``` bash
+docker-compose up docker-compose_prefect_pg_metabase.yaml
+```
+Prefect: http://localhost:8080 *no auth* use `prefect` console. [Docs](https://docs.prefect.io/)  
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
+Metabase: http://localhost:4000 *set user on first start*
+
 ## Defaults 
 Переменные заданые в [.env файле](.env) (файл может быть скрыт в вашей системе).  
 По умолчанию везде, где можно используются:  
@@ -100,6 +108,7 @@ password: `de_pass`
 │   ├── Airflow
 │   ├── Cronicle
 │   ├── Spark
+│   ├── Prefect
 │   ├── Luigi *todo*
 │   ├── StreamSets *todo*
 ├── E(xtract) *todo*

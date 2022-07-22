@@ -28,34 +28,52 @@ docker run --rm "debian:bullseye-slim" bash -c 'numfmt --to iec $(echo $(($(getc
 P.S.: на текущий момент автор собирает и тестирует сборки на `Windows 10 Home 64 + Docker Desktop on WSL2` . Hardware: `Intel i7-10710U 16GB RAM SSD`
 
 ## Быстрый старт
-### Сборка: Cronicle + Postgres + Metabase
 ``` bash
 git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
+```
+Далее выбираем нужную сборку и запускаем указанной командой:
+
+### Сборка: Postgres + Metabase
+``` bash
+docker-compose up docker-compose_pg_metabase.yml
+```
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de` 
+
+Metabase: http://localhost:3000 *set user on first start*
+
+### Сборка: Postgres + ClickHouse + Metabase
+``` bash
+docker-compose up docker-compose_pg_ch_metabase.yml
+```
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de` 
+
+ClickHouse: `clickhouse+http://pg_user:pg_pass@localhost:8123/de` , `clickhouse+native://pg_user:pg_pass@localhost:9000/de` 
+
+Metabase: http://localhost:3000 *set user on first start*
+
+### Сборка: Cronicle + Postgres + Metabase
+``` bash
 docker-compose up docker-compose_cronicle_pg_metabase.yml
 ```
-Cronicle: http://localhost:8080 admin/admin
+Cronicle: http://localhost:8080 `admin`/`admin`
 
-Postgres: postgresql://pg_user:pg_pass@localhost:5432/de
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`
 
 Metabase: http://localhost:3000 *will create user on first start*
 
 ### Сборка: Airflow + Postgres + Metabase
 ``` bash
-git clone https://github.com/iradio/de-toolkit.git
-cd de-toolkit
 docker-compose up docker-compose_airflow_pg_metabase.yml
 ```
-Airflow: http://localhot:8080 de_user/de_pass
+Airflow: http://localhot:8080 `de_user`/`de_pass`
 
-Postgres: postgresql://pg_user:pg_pass@localhost:5432/de 
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de` 
 
 Metabase: http://localhost:3000 *will create user on first start*
 
 ### Сборка: Airbyte + Postgres + Metabase
 ``` bash
-git clone https://github.com/iradio/de-toolkit.git
-cd de-toolkit
 docker-compose up docker-compose_airbyte_pg_metabase.yml
 ```
 Airbyte: http://localhot:8080 *set user on first start*
@@ -63,6 +81,7 @@ Airbyte: http://localhot:8080 *set user on first start*
 Postgres: postgresql://pg_user:pg_pass@localhost:5432/de 
 
 Metabase: http://localhost:3000 *set user on first start*
+
 
 ## Defaults 
 

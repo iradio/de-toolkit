@@ -18,3 +18,6 @@ $ prefect server start
 prefect server start --postgres-url postgres://<username>:<password>@hostname:<port>/<dbname>
 ```
 
+# Write first DAG
+
+Tutorial https://docs.prefect.io/core/tutorial/01-etl-before-prefect.html

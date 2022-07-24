@@ -1,3 +1,7 @@
+# prefect
+prefect/pg_data
+prefect/tutorial
+
 # cronicle
 cronicle/app/*/
 cronicle/data/*/

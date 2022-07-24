@@ -74,7 +74,7 @@ services:
       test: wget -O - http://hasura:$${HASURA_GRAPHQL_SERVER_PORT}/healthz &>/dev/null
         || exit 1
       timeout: 2s
-    image: hasura/graphql-engine:v2.1.1
+    image: hasura/graphql-engine:v2.8.4
     init: true
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
@@ -100,8 +100,10 @@ services:
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
     ports:
-    - 127.0.0.1:15432:5432/tcp
+    - 127.0.0.1:5432:5432/tcp
     restart: always
+    volumes:
+    - "./prefect/pg_data:/var/lib/postgresql/data:rw"
   towel:
     command: python src/prefect_server/services/towel/__main__.py
     depends_on:
@@ -132,12 +134,16 @@ services:
     ports:
     - 127.0.0.1:8080:8080/tcp
     restart: always
+#  agent:
+#    image: prefecthq/prefect:core-${PREFECT_VERSION:-1.2.4}
+#    networks:
+#      - ${DOCKER_NETWORK:-de-toolkit-net}  
   postgresql:
     image: 'bitnami/postgresql:${PG_VERSION:-latest}'
     container_name: postgresql
     hostname: postgresql
     ports:
-      - '5432:5432'
+      - '15432:5432'
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
     volumes:

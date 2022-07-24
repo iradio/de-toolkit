@@ -15,7 +15,22 @@ services:
       - '8080:8080'
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
-  spark-worker:
+  spark-worker-1:
+    image: 'docker.io/bitnami/spark:${SPARK_VERSION:-latest}'
+#    volumes:
+#      - './spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf'
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
+  spark-worker-2:
     image: 'docker.io/bitnami/spark:${SPARK_VERSION:-latest}'
 #    volumes:
 #      - './spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf'

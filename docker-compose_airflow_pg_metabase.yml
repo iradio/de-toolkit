@@ -79,6 +79,11 @@ services:
       - POSTGRESQL_DATABASE=${DE_DB_NAME:-de}
       - POSTGRESQL_USERNAME=${DE_USERNAME:-de_user}
       - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}
+    healthcheck:
+      interval: 10s
+      retries: 60
+      start_period: 2s
+      test: pg_isready -q -d $${DE_DB_NAME:-de} -U $${DE_USERNAME:-de_user} || exit 1
 # metabase
   metabase:
     image: metabase/metabase:${METABASE_VERSION:-latest}

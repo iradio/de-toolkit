@@ -1,5 +1,8 @@
 # SPARK
 
+# Documentation
+
+https://github.com/bitnami/bitnami-docker-spark
 
 # Quick start
 To run PySpark scripts you have to:

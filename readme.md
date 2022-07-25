@@ -34,14 +34,14 @@ cd de-toolkit
 ```
 Далее выбираем нужную сборку и запускаем указанной командой:
 
-### Сборка: Postgres + Metabase
+### Build: Postgres + Metabase
 ``` bash
 docker-compose up docker-compose_pg_metabase.yml
 ```
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`   
 Metabase: http://localhost:3000 *set user on first start*  
 
-### Сборка: Postgres + ClickHouse + Metabase
+### Build: Postgres + ClickHouse + Metabase
 ``` bash
 docker-compose up docker-compose_pg_ch_metabase.yml
 ```
@@ -49,7 +49,7 @@ Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`
 ClickHouse: `clickhouse+http://pg_user:pg_pass@localhost:8123/de` , `clickhouse+native://pg_user:pg_pass@localhost:9000/de`  
 Metabase: http://localhost:3000 *set user on first start*  
 
-### Сборка: Cronicle + Postgres + Metabase
+### Build: Cronicle + Postgres + Metabase
 ``` bash
 docker-compose up docker-compose_cronicle_pg_metabase.yml
 ```
@@ -57,7 +57,7 @@ Cronicle: http://localhost:8080 `admin`/`admin`
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *will create user on first start*  
 
-### Сборка: Airflow + Postgres + Metabase
+### Build: Airflow + Postgres + Metabase
 ``` bash
 docker-compose up docker-compose_airflow_pg_metabase.yml
 ```
@@ -65,7 +65,7 @@ Airflow: http://localhost:8080 `de_user`/`de_pass`
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *will create user on first start*
 
-### Сборка: Airbyte + Postgres + Metabase
+### Build: Airbyte + Postgres + Metabase
 ``` bash
 docker-compose up docker-compose_airbyte_pg_metabase.yml
 ```
@@ -73,16 +73,18 @@ Airbyte: http://localhost:8080 *set user on first start*
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *set user on first start*
 
-### Сборка: Spark + Jupyter + Postgres + Metabase
+### Build: Spark + Jupyter + Postgres + Metabase
 ``` bash
-docker-compose up docker-compose_spark_jupyter_pg_metabase.yml
+docker compose -f "docker-compose_spark_jupyter_pg_metabase.yml" up -d --scale spark-worker=3
 ```
+Where `--scale spark-worker=3` means the number of spark workers in your cluster.  
+
 Spark: http://localhost:8080 *no auth* use check [spark/readme.md](./spark/readme.md)
 Jupyter http://localhost:8888 `de_pass` [change password instruction](./jupyter/notebooks/change_jypyter_pass.ipynb)  
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *set user on first start*
 
-### Сборка: Prefect + Postgres + Metabase
+### Build: Prefect + Postgres + Metabase
 ``` bash
 docker-compose up docker-compose_prefect_pg_metabase.yaml
 ```

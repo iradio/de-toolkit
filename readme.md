@@ -73,11 +73,12 @@ Airbyte: http://localhost:8080 *set user on first start*
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *set user on first start*
 
-### Сборка: Spark + Postgres + Metabase
+### Сборка: Spark + Jupyter + Postgres + Metabase
 ``` bash
-docker-compose up docker-compose_spark_pg_metabase.yml
+docker-compose up docker-compose_spark_jupyter_pg_metabase.yml
 ```
-Spark: http://localhost:8080 *no auth* use check [spark/readme.md](./spark/readme.md)  
+Spark: http://localhost:8080 *no auth* use check [spark/readme.md](./spark/readme.md)
+Jupyter http://localhost:8888 `de_pass` [change password instruction](./jupyter/notebooks/change_jypyter_pass.ipynb)  
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *set user on first start*
 
@@ -123,5 +124,8 @@ password: `de_pass`
 ├── Metabase
 ├── Superset *todo*
 ```
+### IDE 
+├── Jupyter
+
 ## Авторы
 - Тимур Алейников - [iradio](https://github.com/iradio)

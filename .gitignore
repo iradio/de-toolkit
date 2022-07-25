@@ -1,3 +1,10 @@
+# data
+data
+
+# jupyter
+jupyter/notebooks/data
+jupyter/notebooks/output
+
 # prefect
 prefect/pg_data
 prefect/tutorial

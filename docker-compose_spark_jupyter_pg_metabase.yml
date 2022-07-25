@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  jupyter:
+    image: jupyter/pyspark-notebook:${JUPYTER_VERSION:-latest}
+    user: root
+    volumes:
+      - "./jupyter/jupyter_server_config.py:/home/${DE_USERNAME:-de_user}/.jupyter/jupyter_server_config.py:r"
+      - "./jupyter/notebooks:/home/${DE_USERNAME:-de_user}/work:rw"
+      - "./data:/home/${DE_USERNAME:-de_user}/work/data:r"
+    ports:
+      - '8888:8888'
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
+    working_dir: /home/${DE_USERNAME:-de_user}
+    environment:
+      - NB_USER=${DE_USERNAME:-de_user}
+      - CHOWN_HOME=yes
   spark:
     image: 'docker.io/bitnami/spark:${SPARK_VERSION:-latest}'
 #    volumes:
@@ -13,8 +28,12 @@ services:
       - SPARK_SSL_ENABLED=no
     ports:
       - '8080:8080'
+      - '7077:7077'
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
+    volumes:
+       - "./spark/apps:/opt/spark-apps:rw"
+       - "./spark/data:/opt/spark-data:rw"
   spark-worker-1:
     image: 'docker.io/bitnami/spark:${SPARK_VERSION:-latest}'
 #    volumes:
@@ -30,6 +49,9 @@ services:
       - SPARK_SSL_ENABLED=no
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
+    volumes:
+       - "./spark/apps:/opt/spark-apps:rw"
+       - "./spark/data:/opt/spark-data:rw"
   spark-worker-2:
     image: 'docker.io/bitnami/spark:${SPARK_VERSION:-latest}'
 #    volumes:
@@ -45,6 +67,9 @@ services:
       - SPARK_SSL_ENABLED=no
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
+    volumes:
+       - "./spark/apps:/opt/spark-apps:rw"
+       - "./spark/data:/opt/spark-data:rw"
   postgresql:
     image: 'bitnami/postgresql:${PG_VERSION:-latest}'
     container_name: postgresql
@@ -53,6 +78,12 @@ services:
       - '5432:5432'
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
+    healthcheck:
+      interval: 10s
+      retries: 60
+      start_period: 2s
+      test: pg_isready -q -d $${DE_DB_NAME:-de} -U $${DE_USERNAME:-de_user} || exit 1
+      timeout: 2s
     volumes:
       - "./postgresql/data:/bitnami/postgresql"
 #      - "./airflow/1_create_de_user_d.sql:/docker-entrypoint-initdb.d/1_create_de_user_db.sql"

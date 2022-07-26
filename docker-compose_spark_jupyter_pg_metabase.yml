@@ -54,7 +54,6 @@ services:
        - "./spark/data:/opt/spark-data:rw"
   postgresql:
     image: 'bitnami/postgresql:${PG_VERSION:-latest}'
-    container_name: postgresql
     hostname: postgresql
     ports:
       - '5432:5432'

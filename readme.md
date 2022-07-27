@@ -1,4 +1,4 @@
-# Набор инстурментов и sandbox начинающего Data Engineer
+# de-toolkit is toolkit and sandbox for Data Engineers
 `de-toolkit` - набор open source программного обеспечения, предназначенный для самостоятельного обучения профессии инженера данных. Набор построен на основе `docker` и представляет собой варианты компоновки преднастроенного ПО (далее - **сборки**) в виде `docker-compose.yaml` файлов и преднастроенных каталогов вида `product-name` с файлами конфигурации, пресетами и каталогами для монтирования `volumes`.
 
 Сборки включают продукты как минимум из трех категорий: **ETL DB BI** (но это не точно).
@@ -107,18 +107,17 @@ password: `de_pass`
 ```
 ### ETL | ELT
 ```
-├── Комплексные ETL | ELT
+├── ETL
 │   ├── Airflow
 │   ├── Cronicle
 │   ├── Spark
 │   ├── Prefect
 │   ├── Luigi *todo*
 │   ├── StreamSets *todo*
-├── E(xtract) *todo*
+├── E(tract)+L(load)
 │   ├── Airbyte
-├── L(oad) *todo*
-│   ├── Airbyte
-├── T(ransform) *todo*
+│   ├── Metltano *todo*
+├── T(ransform)
 │   ├── dbt
 ```
 ### BI
@@ -129,5 +128,10 @@ password: `de_pass`
 ### IDE 
 ├── Jupyter
 
+### To be reviewed
+meltano  
+dagster  
+MLflow  
+Argo Workflows  
 ## Авторы
 - Тимур Алейников - [iradio](https://github.com/iradio)

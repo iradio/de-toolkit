@@ -1,6 +1,9 @@
 # data
 data
 
+# meltano
+meltano/projects
+
 # jupyter
 jupyter/notebooks/data
 jupyter/notebooks/output

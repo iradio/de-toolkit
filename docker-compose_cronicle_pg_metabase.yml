@@ -1,8 +1,17 @@
 version: '3'
 
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
 services:
 # cronicle
   cronicle:
+    <<: *toolkit-common
     image: bluet/cronicle-docker:${CRONICLE_VERSION:-latest}
     container_name: cronicle
     hostname: cronicle
@@ -19,6 +28,7 @@ services:
       - CRONICLE_server_comm_use_hostnames=1
 # postgresql
   postgresql:
+    <<: *toolkit-common
     image: 'bitnami/postgresql:${PG_VERSION:-latest}'
     container_name: postgresql
     hostname: postgresql
@@ -26,8 +36,6 @@ services:
       - '5432:5432'
     volumes:
       - "./postgresql/data:/bitnami/postgresql"
-#      - "./airflow/1_create_de_user_d.sql:/docker-entrypoint-initdb.d/1_create_de_user_db.sql"
-#      - "./airflow/create_airflow_db.sql:/docker-entrypoint-initdb.d/create_airflow_db.sql"
       - "./metabase/create_metabase_db.sql:/docker-entrypoint-initdb.d/create_metabase_db.sql"
     environment:
       - POSTGRESQL_DATABASE=${DE_DB_NAME:-de}
@@ -40,6 +48,7 @@ services:
       test: pg_isready -q -d $${DE_DB_NAME:-de} -U $${DE_USERNAME:-de_user} || exit 1
 # metabase
   metabase:
+    <<: *toolkit-common
     image: metabase/metabase:${METABASE_VERSION:-latest}
     container_name: metabase
     depends_on:

@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:${CH_VERSION:-latest}
+    hostname: clickhouse
+    ports:
+      - 8123:8123
+      - 9000:9000
+    volumes:
+      - "./clickhouse/data:/var/lib/clickhouse/"
+      - "./clickhouse/logs:/var/log/clickhouse-server/"
+#      - "./clickhouse/config.xml:/etc/clickhouse-server/config.xml"
+#      - "./clickhouse/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh"
+    environment:
+      - CLICKHOUSE_DB=${DE_DB_NAME:-de}
+      - CLICKHOUSE_USER=${DE_USERNAME:-de_user}
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1 
+      - CLICKHOUSE_PASSWORD=${DE_PASSWORD:-de_pass}
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}

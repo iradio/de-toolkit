@@ -55,7 +55,7 @@ docker-compose up docker-compose_cronicle_pg_metabase.yml
 ```
 Cronicle: http://localhost:8080 `admin`/`admin`  
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Metabase: http://localhost:3000 *will create user on first start*  
+Metabase: http://localhost:3000 *will create user on first start*   | de_user@toolkit.de
 
 ### Build: Airflow + Postgres + Metabase
 ``` bash

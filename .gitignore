@@ -1,10 +1,19 @@
+venv 
 # data
 data
+
+# dagster
+dagster/venv
+dagster/tutorial
+dagster/daemon
+dagster/home
+dagster/deploy_docker
 
 # meltano
 meltano/projects
 
 # jupyter
+jupyter/notebooks/
 jupyter/notebooks/data
 jupyter/notebooks/output
 

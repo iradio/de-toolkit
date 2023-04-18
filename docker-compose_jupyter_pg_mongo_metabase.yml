@@ -10,8 +10,7 @@ x-toolkit-common: &toolkit-common
 
 services:
   jupyter:
-    image: jupyter/base-notebook:${JUPYTER_BASE_VERSION:-latest}
-    # image: jupyter/datascience-notebook:latest
+    image: jupyter/pyspark-notebook:${JUPYTER_VERSION:-latest}
     user: root
     volumes:
       - "./jupyter/jupyter_server_config.py:/home/${DE_USERNAME:-de_user}/.jupyter/jupyter_server_config.py:r"
@@ -24,6 +23,24 @@ services:
     environment:
       - NB_USER=${DE_USERNAME:-de_user}
       - CHOWN_HOME=yes
+  mongodb:  
+    image: mongo:latest
+    volumes:
+      - ./mongodb/data:/bitnami/mongodb
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      # - MONGODB_EXTRA_FLAGS=--wiredTigerCacheSizeGB=2
+      # - MONGODB_ENABLE_JOURNAL=true
+      # - MONGODB_ROOT_PASSWORD=${DE_PASSWORD:-de_pass}
+      # - MONGODB_USERNAME=${DE_USER:-de_user}
+      # - MONGODB_PASSWORD=${DE_USER:-de_pass}
+      # - MONGODB_DATABASE=${DE_DB_NAME:-de}
+      # - MONGODB_PORT_NUMBER=27017
+    ports:
+      - 27017:27017
+    <<: *toolkit-common
   postgresql:
     image: 'bitnami/postgresql:${PG_VERSION:-latest}'
     hostname: postgresql

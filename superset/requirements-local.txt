@@ -1,0 +1,4 @@
+pymssql
+clickhouse-connect
+elasticsearch-dbapi
+sqlalchemy-vertica-python

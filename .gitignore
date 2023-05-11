@@ -1,4 +1,10 @@
 venv 
+# superset
+superset/pythonpath_dev
+!superset/pythonpath_dev/.gitignore
+!superset/pythonpath_dev/superset_config.py
+!superset/pythonpath_dev/superset_config_local.example
+
 # data
 data
 
@@ -400,3 +406,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 .vscode/settings.json
+
+metabase/plugins/sample-database.db.mv.db

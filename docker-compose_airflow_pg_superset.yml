@@ -1,0 +1,186 @@
+version: '3.7'
+
+x-superset-image: &superset-image apache/superset:${TAG:-latest-dev}
+x-superset-depends-on: &superset-depends-on
+  - db
+  - redis
+x-superset-volumes: &superset-volumes
+  # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
+  - ./superset:/app/docker
+  - superset_home:/app/superset_home
+
+services:
+# airflow (depends on postgresql)
+  airflow-postgresql:
+    image: bitnami/postgresql:${AIRFLOW_DATABASE_VERSION:-airflow}
+    ports:
+      - "${AIRFLOW_DATABASE_PORT:-15432}:${AIRFLOW_DATABASE_PORT:-15432}"
+    volumes:
+      - './airflow/postgresql_data:/bitnami/postgresql'
+    environment:
+      - POSTGRESQL_DATABASE=${AIRFLOW_DATABASE:-airflow}
+      - POSTGRESQL_PORT_NUMBER=${AIRFLOW_DATABASE_PORT:-15432}
+      - POSTGRESQL_USERNAME=${DE_USERNAME:-de_user}
+      - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}
+      #- ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - "./airflow/redis:/bitnami/redis"
+    ports:
+      - "6379:6379"
+  airflow-worker:
+    image: bitnami/airflow-worker:${AIRFLOW_VERSION:-latest}
+    depends_on:
+      - airflow-postgresql
+      - redis
+    volumes:
+      - "./airflow/dags:/opt/bitnami/airflow/dags"
+      - "./airflow/dags/requirements.txt:/bitnami/python/requirements.txt"
+      - "./airflow/plugins:/opt/bitnami/airflow/plugins"
+    environment:
+      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_EXECUTOR=CeleryExecutor
+      - AIRFLOW_USERNAME=${DE_USERNAME:-de_user}
+      - AIRFLOW_PASSWORD=${DE_PASSWORD:-de_pass}
+      - AIRFLOW_DATABASE_HOST=airflow-postgresql
+      - AIRFLOW_DATABASE_PORT_NUMBER=${AIRFLOW_DATABASE_PORT:-airflow}
+      - AIRFLOW_DATABASE_NAME=${AIRFLOW_DATABASE:-airflow}
+      - AIRFLOW_DATABASE_USERNAME=${DE_USERNAME:-de_user}
+      - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
+      - AIRFLOW_LOAD_EXAMPLES=no
+      - AIRFLOW_WEBSERVER_HOST=airflow
+  airflow-scheduler:
+    image: bitnami/airflow-scheduler:${AIRFLOW_VERSION:-latest}
+    depends_on:
+      - airflow-postgresql
+      - airflow
+      - redis
+    volumes:
+      - "./airflow/dags:/opt/bitnami/airflow/dags"
+      - "./airflow/dags/requirements.txt:/bitnami/python/requirements.txt"
+      - "./airflow/plugins:/opt/bitnami/airflow/plugins"
+    environment:
+      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_EXECUTOR=CeleryExecutor
+      - AIRFLOW_USERNAME=${DE_USERNAME:-de_user}
+      - AIRFLOW_PASSWORD=${DE_PASSWORD:-de_pass}
+      - AIRFLOW_DATABASE_HOST=airflow-postgresql
+      - AIRFLOW_DATABASE_PORT_NUMBER=${AIRFLOW_DATABASE_PORT:-airflow}
+      - AIRFLOW_DATABASE_NAME=${AIRFLOW_DATABASE:-airflow}
+      - AIRFLOW_DATABASE_USERNAME=${DE_USERNAME:-de_user}
+      - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
+      - AIRFLOW_LOAD_EXAMPLES=no
+      - AIRFLOW_WEBSERVER_HOST=airflow
+  airflow:
+    image: bitnami/airflow:${AIRFLOW_VERSION:-latest}
+    depends_on:
+      - airflow-postgresql
+      - redis    
+    volumes:
+      - "./airflow/dags:/opt/bitnami/airflow/dags"
+      - "./airflow/dags/requirements.txt:/bitnami/python/requirements.txt"
+      - "./airflow/plugins:/opt/bitnami/airflow/plugins"
+    environment:
+      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_EXECUTOR=CeleryExecutor
+      - AIRFLOW_DATABASE_HOST=airflow-postgresql
+      - AIRFLOW_DATABASE_PORT_NUMBER=${AIRFLOW_DATABASE_PORT:-airflow}
+      - AIRFLOW_DATABASE_NAME=${AIRFLOW_DATABASE:-airflow}
+      - AIRFLOW_DATABASE_USERNAME=${DE_USERNAME:-de_user}
+      - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
+      - AIRFLOW_PASSWORD=${DE_PASSWORD:-de_pass}
+      - AIRFLOW_USERNAME=${DE_USERNAME:-de_user}
+      - AIRFLOW_EMAIL=user@example.com
+    ports:
+      - '8080:8080'
+# postgresql
+  postgresql:
+    image: 'bitnami/postgresql:${PG_VERSION:-latest}'
+    container_name: postgresql
+    hostname: postgresql
+    ports:
+      - '5432:5432'
+    volumes:
+      - "./postgresql/data:/bitnami/postgresql"
+#      - "./airflow/1_create_de_user_d.sql:/docker-entrypoint-initdb.d/1_create_de_user_db.sql"
+#      - "./airflow/create_airflow_db.sql:/docker-entrypoint-initdb.d/create_airflow_db.sql"
+      - "./metabase/create_metabase_db.sql:/docker-entrypoint-initdb.d/create_metabase_db.sql"
+    environment:
+      - POSTGRESQL_DATABASE=${DE_DB_NAME:-de}
+      - POSTGRESQL_USERNAME=${DE_USERNAME:-de_user}
+      - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}
+    healthcheck:
+      interval: 10s
+      retries: 60
+      start_period: 2s
+      test: pg_isready -q -d $${DE_DB_NAME:-de} -U $${DE_USERNAME:-de_user} || exit 1
+# superset
+  db:
+    env_file: superset/.env-non-dev
+    image: postgres:14
+    container_name: superset_db
+    restart: unless-stopped
+    volumes:
+      - db_home:/var/lib/postgresql/data
+
+  superset:
+    env_file: superset/.env-non-dev
+    image: *superset-image
+    container_name: superset_app
+    command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
+    user: "root"
+    restart: unless-stopped
+    ports:
+      - 8088:3000
+    depends_on: *superset-depends-on
+    volumes: *superset-volumes
+
+  superset-init:
+    image: *superset-image
+    container_name: superset_init
+    command: ["/app/docker/docker-init.sh"]
+    env_file: superset/.env-non-dev
+    depends_on: *superset-depends-on
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      disable: true
+
+  superset-worker:
+    image: *superset-image
+    container_name: superset_worker
+    command: ["/app/docker/docker-bootstrap.sh", "worker"]
+    env_file: superset/.env-non-dev
+    restart: unless-stopped
+    depends_on: *superset-depends-on
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
+
+  superset-worker-beat:
+    image: *superset-image
+    container_name: superset_worker_beat
+    command: ["/app/docker/docker-bootstrap.sh", "beat"]
+    env_file: superset/.env-non-dev
+    restart: unless-stopped
+    depends_on: *superset-depends-on
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      disable: true
+
+volumes:
+  superset_home:
+    external: false
+  db_home:
+    external: false
+  redis:
+    external: false

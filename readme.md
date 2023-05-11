@@ -65,6 +65,15 @@ Airflow: http://localhost:8080 `de_user`/`de_pass`
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *will create user on first start*
 
+### Build: Airflow + Postgres + Superset
+``` bash
+docker-compose -f docker-compose_airflow_pg_superset.yml up -d
+```
+Airflow: http://localhost:8080 `de_user`/`de_pass`  
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
+Superset: http://localhost:3000 `de_user`/`de_pass`
+
+
 ### Build: Airbyte + Postgres + Metabase
 ``` bash
 docker-compose up docker-compose_airbyte_pg_metabase.yml

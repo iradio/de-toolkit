@@ -1,8 +1,24 @@
 version: '3.7'
 
-x-superset-image: &superset-image apache/superset:${TAG:-latest-dev}
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+volumes:
+  superset_home:
+    external: false
+  db_home:
+    external: false
+  # redis:
+  #   external: false
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+x-superset-image: &superset-image apache/superset:${SUPERSET_VERSION:-latest-dev}
 x-superset-depends-on: &superset-depends-on
-  - db
+  - superset-db
   - redis
 x-superset-volumes: &superset-volumes
   # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
@@ -24,6 +40,7 @@ services:
       - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}
       #- ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
+    <<: *toolkit-common
   redis:
     image: 'bitnami/redis:latest'
     environment:
@@ -32,6 +49,7 @@ services:
       - "./airflow/redis:/bitnami/redis"
     ports:
       - "6379:6379"
+    <<: *toolkit-common
   airflow-worker:
     image: bitnami/airflow-worker:${AIRFLOW_VERSION:-latest}
     depends_on:
@@ -54,6 +72,7 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_WEBSERVER_HOST=airflow
+    <<: *toolkit-common
   airflow-scheduler:
     image: bitnami/airflow-scheduler:${AIRFLOW_VERSION:-latest}
     depends_on:
@@ -77,6 +96,7 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_WEBSERVER_HOST=airflow
+    <<: *toolkit-common
   airflow:
     image: bitnami/airflow:${AIRFLOW_VERSION:-latest}
     depends_on:
@@ -100,6 +120,7 @@ services:
       - AIRFLOW_EMAIL=user@example.com
     ports:
       - '8080:8080'
+    <<: *toolkit-common
 # postgresql
   postgresql:
     image: 'bitnami/postgresql:${PG_VERSION:-latest}'
@@ -121,14 +142,16 @@ services:
       retries: 60
       start_period: 2s
       test: pg_isready -q -d $${DE_DB_NAME:-de} -U $${DE_USERNAME:-de_user} || exit 1
+    <<: *toolkit-common
 # superset
-  db:
+  superset-db:
     env_file: superset/.env-non-dev
     image: postgres:14
     container_name: superset_db
     restart: unless-stopped
     volumes:
       - db_home:/var/lib/postgresql/data
+    <<: *toolkit-common
 
   superset:
     env_file: superset/.env-non-dev
@@ -138,9 +161,10 @@ services:
     user: "root"
     restart: unless-stopped
     ports:
-      - 8088:3000
+      - 3000:8088
     depends_on: *superset-depends-on
     volumes: *superset-volumes
+    <<: *toolkit-common
 
   superset-init:
     image: *superset-image
@@ -152,6 +176,7 @@ services:
     volumes: *superset-volumes
     healthcheck:
       disable: true
+    <<: *toolkit-common
 
   superset-worker:
     image: *superset-image
@@ -164,6 +189,7 @@ services:
     volumes: *superset-volumes
     healthcheck:
       test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
+    <<: *toolkit-common
 
   superset-worker-beat:
     image: *superset-image
@@ -176,11 +202,5 @@ services:
     volumes: *superset-volumes
     healthcheck:
       disable: true
+    <<: *toolkit-common
 
-volumes:
-  superset_home:
-    external: false
-  db_home:
-    external: false
-  redis:
-    external: false

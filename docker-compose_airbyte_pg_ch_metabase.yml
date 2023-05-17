@@ -1,40 +1,43 @@
-version: '3'
+version: "3.8"
 
+#https://github.com/compose-spec/compose-spec/blob/master/spec.md#using-extensions-as-fragments
+x-logging: &default-logging
+  options:
+    max-size: "100m"
+    max-file: "5"
+  driver: json-file
 services:
-# airbyte
   # hook in case we need to add init behavior
   # every root service (no depends_on) should depend on init
   init:
     image: airbyte/init:${VERSION}
-#    logging: *default-logging
+    logging: *default-logging
     container_name: init
-    command: '/bin/sh -c "./scripts/create_mount_directories.sh /local_parent ${HACK_LOCAL_ROOT_PARENT} ${LOCAL_ROOT}"'
+    command: /bin/sh -c "./scripts/create_mount_directories.sh /local_parent ${HACK_LOCAL_ROOT_PARENT} ${LOCAL_ROOT}"
     environment:
       - LOCAL_ROOT=${LOCAL_ROOT}
       - HACK_LOCAL_ROOT_PARENT=${HACK_LOCAL_ROOT_PARENT}
     volumes:
       - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
-    networks:
-      - ${DOCKER_NETWORK:-de-toolkit-net}
   bootloader:
     image: airbyte/bootloader:${VERSION}
-#    logging: *default-logging
+    logging: *default-logging
     container_name: airbyte-bootloader
     environment:
       - AIRBYTE_VERSION=${VERSION}
-      - CONFIG_DATABASE_PASSWORD=${CONFIG_DATABASE_PASSWORD:-}
-      - CONFIG_DATABASE_URL=${CONFIG_DATABASE_URL:-}
-      - CONFIG_DATABASE_USER=${CONFIG_DATABASE_USER:-}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_URL=${DATABASE_URL}
       - DATABASE_USER=${DATABASE_USER}
       - LOG_LEVEL=${LOG_LEVEL}
-      - RUN_DATABASE_MIGRATION_ON_STARTUP=${RUN_DATABASE_MIGRATION_ON_STARTUP}
+      - LOCAL_CONNECTOR_CATALOG_PATH=${LOCAL_CONNECTOR_CATALOG_PATH}
     networks:
-      - ${DOCKER_NETWORK:-de-toolkit-net}
+      - airbyte_internal
+    depends_on:
+      init:
+        condition: service_completed_successfully
   db:
     image: airbyte/db:${VERSION}
-#    logging: *default-logging
+    logging: *default-logging
     container_name: airbyte-db
     restart: unless-stopped
     environment:
@@ -49,10 +52,10 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     networks:
-      - ${DOCKER_NETWORK:-de-toolkit-net}
+      - airbyte_internal
   worker:
     image: airbyte/worker:${VERSION}
-#    logging: *default-logging
+    logging: *default-logging
     container_name: airbyte-worker
     restart: unless-stopped
     environment:
@@ -67,6 +70,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - DATABASE_USER=${DATABASE_USER}
       - DEPLOYMENT_MODE=${DEPLOYMENT_MODE}
+      - INTERNAL_API_HOST=${INTERNAL_API_HOST}
       - JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=${JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION:-}
       - JOB_MAIN_CONTAINER_CPU_LIMIT=${JOB_MAIN_CONTAINER_CPU_LIMIT}
       - JOB_MAIN_CONTAINER_CPU_REQUEST=${JOB_MAIN_CONTAINER_CPU_REQUEST}
@@ -75,17 +79,23 @@ services:
       - LOCAL_DOCKER_MOUNT=${LOCAL_DOCKER_MOUNT}
       - LOCAL_ROOT=${LOCAL_ROOT}
       - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_CONNECTOR_MESSAGES=${LOG_CONNECTOR_MESSAGES}
       - MAX_CHECK_WORKERS=${MAX_CHECK_WORKERS}
       - MAX_DISCOVER_WORKERS=${MAX_DISCOVER_WORKERS}
       - MAX_SPEC_WORKERS=${MAX_SPEC_WORKERS}
       - MAX_SYNC_WORKERS=${MAX_SYNC_WORKERS}
+      - MAX_NOTIFY_WORKERS=${MAX_NOTIFY_WORKERS}
+      - SHOULD_RUN_NOTIFY_WORKFLOWS=${SHOULD_RUN_NOTIFY_WORKFLOWS}
+      - NORMALIZATION_JOB_MAIN_CONTAINER_MEMORY_LIMIT=${NORMALIZATION_JOB_MAIN_CONTAINER_MEMORY_LIMIT}
+      - NORMALIZATION_JOB_MAIN_CONTAINER_MEMORY_REQUEST=${NORMALIZATION_JOB_MAIN_CONTAINER_MEMORY_REQUEST}
+      - NORMALIZATION_JOB_MAIN_CONTAINER_CPU_LIMIT=${NORMALIZATION_JOB_MAIN_CONTAINER_CPU_LIMIT}
+      - NORMALIZATION_JOB_MAIN_CONTAINER_CPU_REQUEST=${NORMALIZATION_JOB_MAIN_CONTAINER_CPU_REQUEST}
       - SECRET_PERSISTENCE=${SECRET_PERSISTENCE}
       - SYNC_JOB_MAX_ATTEMPTS=${SYNC_JOB_MAX_ATTEMPTS}
       - SYNC_JOB_MAX_TIMEOUT_DAYS=${SYNC_JOB_MAX_TIMEOUT_DAYS}
       - TEMPORAL_HOST=${TEMPORAL_HOST}
       - TRACKING_STRATEGY=${TRACKING_STRATEGY}
       - WEBAPP_URL=${WEBAPP_URL}
-      - WORKER_ENVIRONMENT=${WORKER_ENVIRONMENT}
       - WORKSPACE_DOCKER_MOUNT=${WORKSPACE_DOCKER_MOUNT}
       - WORKSPACE_ROOT=${WORKSPACE_ROOT}
       - METRIC_CLIENT=${METRIC_CLIENT}
@@ -96,17 +106,27 @@ services:
       - ACTIVITY_INITIAL_DELAY_BETWEEN_ATTEMPTS_SECONDS=${ACTIVITY_INITIAL_DELAY_BETWEEN_ATTEMPTS_SECONDS}
       - ACTIVITY_MAX_DELAY_BETWEEN_ATTEMPTS_SECONDS=${ACTIVITY_MAX_DELAY_BETWEEN_ATTEMPTS_SECONDS}
       - WORKFLOW_FAILURE_RESTART_DELAY_SECONDS=${WORKFLOW_FAILURE_RESTART_DELAY_SECONDS}
+      - AUTO_DETECT_SCHEMA=${AUTO_DETECT_SCHEMA}
       - USE_STREAM_CAPABLE_STATE=${USE_STREAM_CAPABLE_STATE}
-      - DOCKER_NETWORK=${DOCKER_NETWORK}
+      - MICRONAUT_ENVIRONMENTS=${WORKERS_MICRONAUT_ENVIRONMENTS}
+      - APPLY_FIELD_SELECTION=${APPLY_FIELD_SELECTION}
+      - FIELD_SELECTION_WORKSPACES=${FIELD_SELECTION_WORKSPACES}
+    configs:
+      - flags
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - workspace:${WORKSPACE_ROOT}
       - ${LOCAL_ROOT}:${LOCAL_ROOT}
+    ports:
+      - "9000"
     networks:
-      - ${DOCKER_NETWORK:-de-toolkit-net}
+      - airbyte_internal
+    depends_on:
+      bootloader:
+        condition: service_completed_successfully
   server:
     image: airbyte/server:${VERSION}
-#    logging: *default-logging
+    logging: *default-logging
     container_name: airbyte-server
     restart: unless-stopped
     environment:
@@ -130,43 +150,50 @@ services:
       - SECRET_PERSISTENCE=${SECRET_PERSISTENCE}
       - TEMPORAL_HOST=${TEMPORAL_HOST}
       - TRACKING_STRATEGY=${TRACKING_STRATEGY}
+      - JOB_ERROR_REPORTING_STRATEGY=${JOB_ERROR_REPORTING_STRATEGY}
+      - JOB_ERROR_REPORTING_SENTRY_DSN=${JOB_ERROR_REPORTING_SENTRY_DSN}
       - WEBAPP_URL=${WEBAPP_URL}
       - WORKER_ENVIRONMENT=${WORKER_ENVIRONMENT}
       - WORKSPACE_ROOT=${WORKSPACE_ROOT}
+      - GITHUB_STORE_BRANCH=${GITHUB_STORE_BRANCH}
+      - MICRONAUT_ENVIRONMENTS=${WORKERS_MICRONAUT_ENVIRONMENTS}
+      - AUTO_DETECT_SCHEMA=${AUTO_DETECT_SCHEMA}
+      - MAX_NOTIFY_WORKERS=5
+      - SHOULD_RUN_NOTIFY_WORKFLOWS=${SHOULD_RUN_NOTIFY_WORKFLOWS}
     ports:
-      - 8001:8001
+      - "8001"
+    configs:
+      - flags
     volumes:
       - workspace:${WORKSPACE_ROOT}
       - data:${CONFIG_ROOT}
       - ${LOCAL_ROOT}:${LOCAL_ROOT}
     networks:
-      - ${DOCKER_NETWORK:-de-toolkit-net}
+      - airbyte_internal
+    depends_on:
+      bootloader:
+        condition: service_completed_successfully
   webapp:
     image: airbyte/webapp:${VERSION}
-#    logging: *default-logging
+    logging: *default-logging
     container_name: airbyte-webapp
     restart: unless-stopped
     ports:
-      - 8080:80
+      - "80"
     environment:
-      - AIRBYTE_ROLE=${AIRBYTE_ROLE:-}
-      - AIRBYTE_VERSION=${VERSION}
-      - API_URL=${API_URL:-}
-      - FULLSTORY=${FULLSTORY:-}
       - INTERNAL_API_HOST=${INTERNAL_API_HOST}
-      - IS_DEMO=${IS_DEMO:-}
-      - OPENREPLAY=${OPENREPLAY:-}
-      - PAPERCUPS_STORYTIME=${PAPERCUPS_STORYTIME:-}
+      - CONNECTOR_BUILDER_API_HOST=${CONNECTOR_BUILDER_API_HOST}
       - TRACKING_STRATEGY=${TRACKING_STRATEGY}
     networks:
-      - ${DOCKER_NETWORK:-de-toolkit-net}
+      - airbyte_internal
+    depends_on:
+      bootloader:
+        condition: service_completed_successfully
   airbyte-temporal:
     image: airbyte/temporal:${VERSION}
-#    logging: *default-logging
+    logging: *default-logging
     container_name: airbyte-temporal
     restart: unless-stopped
-    ports:
-      - 7233:7233
     environment:
       - DB=postgresql
       - DB_PORT=${DATABASE_PORT}
@@ -176,19 +203,80 @@ services:
       - POSTGRES_SEEDS=${DATABASE_HOST}
       - POSTGRES_USER=${DATABASE_USER}
     volumes:
-      - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+      - ./airbyte/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
     networks:
+      - airbyte_internal
+  airbyte-cron:
+    image: airbyte/cron:${VERSION}
+    logging: *default-logging
+    container_name: airbyte-cron
+    restart: unless-stopped
+    environment:
+      - AIRBYTE_VERSION=${VERSION}
+      - CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=${CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_USER=${DATABASE_USER}
+      - DEPLOYMENT_MODE=${DEPLOYMENT_MODE}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - REMOTE_CONNECTOR_CATALOG_URL=${REMOTE_CONNECTOR_CATALOG_URL}
+      - TEMPORAL_HISTORY_RETENTION_IN_DAYS=${TEMPORAL_HISTORY_RETENTION_IN_DAYS}
+      - UPDATE_DEFINITIONS_CRON_ENABLED=${UPDATE_DEFINITIONS_CRON_ENABLED}
+      - WORKSPACE_ROOT=${WORKSPACE_ROOT}
+      - MICRONAUT_ENVIRONMENTS=${CRON_MICRONAUT_ENVIRONMENTS}
+    configs:
+      - flags
+    volumes:
+      - workspace:${WORKSPACE_ROOT}
+    networks:
+      - airbyte_internal
+    depends_on:
+      bootloader:
+        condition: service_completed_successfully
+  airbyte-connector-builder-server:
+    image: airbyte/connector-atelier-server:${VERSION}
+    logging: *default-logging
+    container_name: airbyte-connector-builder-server
+    restart: unless-stopped
+    ports:
+      - 80
+    environment:
+      - AIRBYTE_VERSION=${VERSION}
+      - CDK_VERSION=${CDK_VERSION}
+      - PYTHON_VERSION=${PYTHON_VERSION}
+    networks:
+      - airbyte_internal
+    depends_on:
+      bootloader:
+        condition: service_completed_successfully
+  airbyte-proxy:
+    image: airbyte/proxy:${VERSION}
+    container_name: airbyte-proxy
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8003:8003"
+    environment:
+      - BASIC_AUTH_USERNAME=${BASIC_AUTH_USERNAME}
+      - BASIC_AUTH_PASSWORD=${BASIC_AUTH_PASSWORD}
+      - BASIC_AUTH_PROXY_TIMEOUT=${BASIC_AUTH_PROXY_TIMEOUT}
+    networks:
+      - airbyte_internal
       - ${DOCKER_NETWORK:-de-toolkit-net}
-# dbt runs by airbyte to transform the data. Check airbyte's UI
+    depends_on:
+      - webapp
+      - server
+
 # postgresql
   postgresql:
+    networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}
     image: 'bitnami/postgresql:${PG_VERSION:-latest}'
     container_name: postgresql
     hostname: postgresql
     ports:
       - '5432:5432'
-    networks:
-      - ${DOCKER_NETWORK:-de-toolkit-net}
     volumes:
       - "./postgresql/data:/bitnami/postgresql"
 #      - "./airflow/1_create_de_user_d.sql:/docker-entrypoint-initdb.d/1_create_de_user_db.sql"
@@ -205,7 +293,7 @@ services:
       test: pg_isready -q -d $${DE_DB_NAME:-de} -U $${DE_USERNAME:-de_user} || exit 1
 # clickhouse
   clickhouse:
-    image: clickhouse/clickhouse-server:${CH_VERSION:-de_user}
+    image: clickhouse/clickhouse-server:${CH_VERSION:-latest}
     hostname: clickhouse
     ports:
       - 8123:8123
@@ -222,8 +310,11 @@ services:
       - CLICKHOUSE_PASSWORD=${DE_PASSWORD:-de_pass}
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
+
 # metabase
   metabase:
+    networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}
     image: metabase/metabase:${METABASE_VERSION:-latest}
     container_name: metabase
     depends_on:
@@ -231,8 +322,6 @@ services:
     hostname: metabase
     ports:
       - "3000:3000"
-    networks:
-      - ${DOCKER_NETWORK:-de-toolkit-net}
     volumes:
       - "./metabase/plugins:/plugins"
       - "./metabase/data:/metabase-data"
@@ -244,10 +333,6 @@ services:
       - MB_DB_PASS=${DE_PASSWORD:-de_pass}
       - MB_DB_HOST=postgresql
 
-networks:
-  de-toolkit-net:
-    name: ${DOCKER_NETWORK:-de-toolkit-net}
-  
 volumes:
   workspace:
     name: ${WORKSPACE_DOCKER_MOUNT}
@@ -258,3 +343,13 @@ volumes:
     name: ${DATA_DOCKER_MOUNT}
   db:
     name: ${DB_DOCKER_MOUNT}
+
+configs:
+  flags:
+    file: ./airbyte/flags.yml
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+  airbyte_internal:
+    

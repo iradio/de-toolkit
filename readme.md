@@ -76,9 +76,9 @@ Superset: http://localhost:3000 `de_user`/`de_pass`
 
 ### Build: Airbyte + Postgres + Metabase
 ``` bash
-docker-compose up docker-compose_airbyte_pg_metabase.yml
+docker-compose -f docker-compose_airbyte.yml --env-file ./airbyte/.env up -d
 ```
-Airbyte: http://localhost:8080 *set user on first start*  
+Airbyte: http://localhost:8000 *set user on first start*  
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:3000 *set user on first start*
 

@@ -11,7 +11,7 @@ services:
   # every root service (no depends_on) should depend on init
   init:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/init:${VERSION}
     logging: *default-logging
     container_name: init
@@ -23,7 +23,7 @@ services:
       - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
   bootloader:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/bootloader:${VERSION}
     logging: *default-logging
     container_name: airbyte-bootloader
@@ -41,7 +41,7 @@ services:
         condition: service_completed_successfully
   db:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/db:${VERSION}
     logging: *default-logging
     container_name: airbyte-db
@@ -61,7 +61,7 @@ services:
       - airbyte_internal
   worker:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/worker:${VERSION}
     logging: *default-logging
     container_name: airbyte-worker
@@ -134,7 +134,7 @@ services:
         condition: service_completed_successfully
   server:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/server:${VERSION}
     logging: *default-logging
     container_name: airbyte-server
@@ -185,7 +185,7 @@ services:
         condition: service_completed_successfully
   webapp:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/webapp:${VERSION}
     logging: *default-logging
     container_name: airbyte-webapp
@@ -203,7 +203,7 @@ services:
         condition: service_completed_successfully
   airbyte-temporal:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/temporal:${VERSION}
     logging: *default-logging
     container_name: airbyte-temporal
@@ -222,7 +222,7 @@ services:
       - airbyte_internal
   airbyte-cron:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/cron:${VERSION}
     logging: *default-logging
     container_name: airbyte-cron
@@ -251,7 +251,7 @@ services:
         condition: service_completed_successfully
   airbyte-connector-builder-server:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/connector-atelier-server:${VERSION}
     logging: *default-logging
     container_name: airbyte-connector-builder-server
@@ -269,7 +269,7 @@ services:
         condition: service_completed_successfully
   airbyte-proxy:
     env_file:
-      - ./airbyte/.env
+      - .env
     image: airbyte/proxy:${VERSION}
     container_name: airbyte-proxy
     restart: unless-stopped

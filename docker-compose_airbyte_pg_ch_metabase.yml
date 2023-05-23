@@ -10,6 +10,8 @@ services:
   # hook in case we need to add init behavior
   # every root service (no depends_on) should depend on init
   init:
+    env_file:
+      - .env
     image: airbyte/init:${VERSION}
     logging: *default-logging
     container_name: init
@@ -20,6 +22,8 @@ services:
     volumes:
       - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
   bootloader:
+    env_file:
+      - .env
     image: airbyte/bootloader:${VERSION}
     logging: *default-logging
     container_name: airbyte-bootloader
@@ -36,6 +40,8 @@ services:
       init:
         condition: service_completed_successfully
   db:
+    env_file:
+      - .env
     image: airbyte/db:${VERSION}
     logging: *default-logging
     container_name: airbyte-db
@@ -54,6 +60,8 @@ services:
     networks:
       - airbyte_internal
   worker:
+    env_file:
+      - .env
     image: airbyte/worker:${VERSION}
     logging: *default-logging
     container_name: airbyte-worker
@@ -125,6 +133,8 @@ services:
       bootloader:
         condition: service_completed_successfully
   server:
+    env_file:
+      - .env
     image: airbyte/server:${VERSION}
     logging: *default-logging
     container_name: airbyte-server
@@ -174,6 +184,8 @@ services:
       bootloader:
         condition: service_completed_successfully
   webapp:
+    env_file:
+      - .env
     image: airbyte/webapp:${VERSION}
     logging: *default-logging
     container_name: airbyte-webapp
@@ -190,6 +202,8 @@ services:
       bootloader:
         condition: service_completed_successfully
   airbyte-temporal:
+    env_file:
+      - .env
     image: airbyte/temporal:${VERSION}
     logging: *default-logging
     container_name: airbyte-temporal
@@ -207,6 +221,8 @@ services:
     networks:
       - airbyte_internal
   airbyte-cron:
+    env_file:
+      - .env
     image: airbyte/cron:${VERSION}
     logging: *default-logging
     container_name: airbyte-cron
@@ -234,6 +250,8 @@ services:
       bootloader:
         condition: service_completed_successfully
   airbyte-connector-builder-server:
+    env_file:
+      - .env
     image: airbyte/connector-atelier-server:${VERSION}
     logging: *default-logging
     container_name: airbyte-connector-builder-server
@@ -250,6 +268,8 @@ services:
       bootloader:
         condition: service_completed_successfully
   airbyte-proxy:
+    env_file:
+      - .env
     image: airbyte/proxy:${VERSION}
     container_name: airbyte-proxy
     restart: unless-stopped
@@ -299,15 +319,17 @@ services:
       - 8123:8123
       - 9000:9000
     volumes:
-      - "./clickhouse/data:/var/lib/clickhouse/"
+      # - "./clickhouse/data:/var/lib/clickhouse/"
+      - clickhouse_data:/var/lib/clickhouse/
       - "./clickhouse/logs:/var/log/clickhouse-server/"
-#      - "./clickhouse/config.xml:/etc/clickhouse-server/config.xml"
-#      - "./clickhouse/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh"
+      # - "./clickhouse/override.xml:/bitnami/clickhouse/etc/conf.d/override.xml:ro"
     environment:
       - CLICKHOUSE_DB=${DE_DB_NAME:-de}
       - CLICKHOUSE_USER=${DE_USERNAME:-de_user}
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1 
+      - CLICKHOUSE_SERVER_REMOTE_CONNECTIONS=1
       - CLICKHOUSE_PASSWORD=${DE_PASSWORD:-de_pass}
+      - LISTEN_HOST=${CH_LISTEN_HOST:-0.0.0.0} 
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
 
@@ -343,6 +365,7 @@ volumes:
     name: ${DATA_DOCKER_MOUNT}
   db:
     name: ${DB_DOCKER_MOUNT}
+  clickhouse_data:
 
 configs:
   flags:

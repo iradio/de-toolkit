@@ -109,6 +109,14 @@ Prefect: http://localhost:8080 *no auth* use `prefect` console. [Docs](https://d
 Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
 Metabase: http://localhost:4000 *set user on first start*
 
+### Build: Dagster + Postgres + Metabase
+``` bash
+docker-compose up docker-compose_dagster_pg_metabase.yaml
+```
+Dagster: http://localhost:8080 *no auth*. [Docs](https://docs.dagster.io/getting-started)  
+Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
+Metabase: http://localhost:3000 *set user on first start*
+
 ## Defaults 
 Переменные заданые в [.env файле](.env) (файл может быть скрыт в вашей системе).  
 По умолчанию везде, где можно используются:  

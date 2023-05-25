@@ -1,0 +1,27 @@
+version: '3.8'
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+services:
+  jupyter:
+    image: jupyter/${JUPYTER_BASE:-base-notebook}:${JUPYTER_BASE_VERSION:-latest}
+    # image: jupyter/datascience-notebook:latest
+    user: root
+    volumes:
+      - "./jupyter_server_config.py:/home/${DE_USERNAME:-de_user}/.jupyter/jupyter_server_config.py:r"
+      - "./notebooks:/home/${DE_USERNAME:-de_user}/project/src:rw"
+      - "./data:/home/${DE_USERNAME:-de_user}/project/data:rw"
+      - "../common/data:/home/${DE_USERNAME:-de_user}/project/common_data:r"
+    ports:
+      - '4000:8888'
+    <<: *toolkit-common
+    working_dir: /home/${DE_USERNAME:-de_user}
+    environment:
+      - NB_USER=${DE_USERNAME:-de_user}
+      - CHOWN_HOME=yes

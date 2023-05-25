@@ -408,3 +408,6 @@ MigrationBackup/
 .vscode/settings.json
 
 metabase/plugins/sample-database.db.mv.db
+
+# Superset
+superset/pythonpath_dev

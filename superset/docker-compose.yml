@@ -1,0 +1,97 @@
+version: '3.8'
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+volumes:
+  superset_home:
+    external: false
+  superset_db_data:
+    external: false
+  superset_redis_data:
+    external: false
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+x-superset-image: &superset-image apache/superset:${SUPERSET_VERSION:-latest}
+x-superset-depends-on: &superset-depends-on
+  - superset-db
+  - superset-redis
+x-superset-volumes: &superset-volumes
+  # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
+  - ./:/app/docker
+  - superset_home:/app/superset_home
+
+services:
+  superset-db:
+    env_file: .env
+    image: postgres:14
+    container_name: superset_db
+    restart: unless-stopped
+    volumes:
+      - superset_db_data:/var/lib/postgresql/data
+    <<: *toolkit-common
+  superset-redis:
+    env_file: .env
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - "superset_redis_data:/bitnami/redis"
+    ports:
+      - "6380:6379"
+    <<: *toolkit-common
+  superset:
+    env_file: .env
+    image: *superset-image
+    container_name: superset_app
+    command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
+    user: "root"
+    restart: unless-stopped
+    ports:
+      - 3001:8088
+    depends_on: *superset-depends-on
+    volumes: *superset-volumes
+    <<: *toolkit-common
+
+  superset-init:
+    image: *superset-image
+    container_name: superset_init
+    command: ["/app/docker/docker-init.sh"]
+    env_file: .env
+    depends_on: *superset-depends-on
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      disable: true
+    <<: *toolkit-common
+
+  superset-worker:
+    image: *superset-image
+    container_name: superset_worker
+    command: ["/app/docker/docker-bootstrap.sh", "worker"]
+    env_file: .env
+    restart: unless-stopped
+    depends_on: *superset-depends-on
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
+    <<: *toolkit-common
+
+  superset-worker-beat:
+    image: *superset-image
+    container_name: superset_worker_beat
+    command: ["/app/docker/docker-bootstrap.sh", "beat"]
+    env_file: .env
+    restart: unless-stopped
+    depends_on: *superset-depends-on
+    user: "root"
+    volumes: *superset-volumes
+    healthcheck:
+      disable: true
+    <<: *toolkit-common
+

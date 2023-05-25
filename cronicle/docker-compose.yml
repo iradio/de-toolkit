@@ -1,0 +1,28 @@
+version: '3'
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+services:
+# cronicle
+  cronicle:
+    <<: *toolkit-common
+    image: bluet/cronicle-docker:${CRONICLE_VERSION:-latest}
+    container_name: cronicle
+    hostname: cronicle
+    ports:
+      - "8500:3012" 
+    restart: unless-stopped
+    volumes:
+      - "./data/:/opt/cronicle/data:rw"
+      - "./logs:/opt/cronicle/logs:rw"
+      - "./plugins:/opt/cronicle/plugins:rw"
+      - "./app:/app:rw"
+    environment:
+      - CRONICLE_WebServer__http_port=3012
+      - CRONICLE_server_comm_use_hostnames=1

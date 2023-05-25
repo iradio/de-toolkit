@@ -1,0 +1,31 @@
+version: '3.8'
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+volumes:
+  postgresql-data:
+
+services:
+  postgresql:
+    image: 'bitnami/postgresql:${PG_VERSION:-latest}'
+    ports:
+      - '5432:5432'
+    <<: *toolkit-common
+    healthcheck:
+      interval: 10s
+      retries: 60
+      start_period: 2s
+      test: pg_isready -q -d $${DE_DB_NAME:-de} -U $${DE_USERNAME:-de_user} || exit 1
+      timeout: 2s
+    volumes:
+      - postgresql-data:/bitnami/postgresql
+    environment:
+      - POSTGRESQL_DATABASE=${DE_DB_NAME:-de}
+      - POSTGRESQL_USERNAME=${DE_USERNAME:-de_user}
+      - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}

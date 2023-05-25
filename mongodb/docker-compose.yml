@@ -1,0 +1,29 @@
+version: '3'
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+volumes:
+  mongodb_data:
+
+services:
+  mongodb:
+    image: bitnami/mongodb:${MONGODB_VERSION:-latest}
+    <<: *toolkit-common
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/bitnami/mongodb
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MONGODB_EXTRA_FLAGS=--wiredTigerCacheSizeGB=2
+      - MONGODB_ENABLE_JOURNAL=true
+      - MONGODB_ROOT_PASSWORD=${DE_PASSWORD:-de_pass}
+      - MONGODB_USERNAME=${DE_USERNAME:-de_user}
+      - MONGODB_DATABASE=${DE_DB_NAME:-de}
+      - MONGODB_PORT_NUMBER=27017

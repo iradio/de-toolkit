@@ -1,11 +1,11 @@
 # de-toolkit is toolkit and sandbox for Data Engineers
-`de-toolkit` - набор open source программного обеспечения, предназначенный для самостоятельного обучения профессии инженера данных. Набор построен на основе `docker` и представляет собой варианты компоновки преднастроенного ПО (далее - **сборки**) в виде `docker-compose.yaml` файлов и преднастроенных каталогов вида `product-name` с файлами конфигурации, пресетами и каталогами для монтирования `volumes`.
+`de-toolkit` - набор open source программного обеспечения, предназначенный для самостоятельного обучения профессии инженера данных. Набор построен на основе `docker` и представляет собой набор `docker-compose` инструкций по развертыванию продуктов в общей виртуальной сети `de-toolkit-network`, а также необходимых файлов конфигурации, инициализации и примеров для демонстрации работы инструментов.
 
-Сборки включают продукты как минимум из трех категорий: **ETL DB BI** (но это не точно).
+`de-toolkit` включают продукты как минимум из трех категорий: **ETL DB BI**.
 
-Проект создается и поставляется в образовательных целях.
+**Проект создается и поставляется в образовательных целях.**
 
-Не используейте `de-toolkit` в production!
+**Не используейте `de-toolkit` в production!**
 
 ## Data Engineer Toolkit
 | Product | Local ports | Local address | Credentials | Internal hostname |
@@ -24,7 +24,7 @@
 | [MongoDB](./mongodb/) | 27017 | `mongodb://de_user:de_pass@localhost:27017/de` | db: `de`, l: `de_user`, p: `de_pass` | mongodb |
 | **DWH building** |
 | [dbt](./dbt/) | 9000 | [http://localhost:9000](http://localhost:9000) | *no auth* | dbt |
-| **Visulisation** |
+| **Visualization** |
 | [Metabase](./metabase/) | 3000 | [http://localhost:3000](http://localhost:3000) | *set user on first start* | metabase |  
 | [Superset](./superset/) | 3001 | [http://localhost:3001](http://localhost:3001) | l: `de_user`, p: `de_pass` | superset* |
 | **Analytics** |

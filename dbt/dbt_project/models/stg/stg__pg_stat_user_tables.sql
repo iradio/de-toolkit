@@ -1,0 +1,1 @@
+select * from {{source('de', 'pg_stat_user_tables')}}

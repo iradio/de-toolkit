@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: de
+    schema: pg_catalog  
+    tables:
+      - name: pg_stat_database
+      - name: pg_stat_user_tables
+

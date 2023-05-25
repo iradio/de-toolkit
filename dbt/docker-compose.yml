@@ -1,13 +1,39 @@
 version: '3'
 
 services:
-  dbt:
-    # image: ghcr.io/dbt-labs/dbt-core:${DBT_VERSION:-1.4.4}
+  dbt-run:
     build: 
       context: ./
+    image: de-toolkit/dbt
     volumes:
       - "./dbt_project/:/usr/app"
-      - "./profiles.yml:/root/.dbt/profiles.yml"
+      - "./profiles.yml:/root/.dbt/profiles.yml:r"
+    command: "run"
+    environment:
+      - DBT_USER=de_user
+      - DBT_PASSWORD=de_pass
+    tty: true
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
+  
+  dbt-docs-gen:
+    image: de-toolkit/dbt
+    volumes:
+      - "./dbt_project/:/usr/app"
+      - "./profiles.yml:/root/.dbt/profiles.yml:r"
+    command: "docs generate"
+    environment:
+      - DBT_USER=de_user
+      - DBT_PASSWORD=de_pass
+    tty: true
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
+
+  dbt-docs:
+    image: de-toolkit/dbt
+    volumes:
+      - "./dbt_project/:/usr/app"
+      - "./profiles.yml:/root/.dbt/profiles.yml:r"
     ports:
       - 9000:9090
     command: "docs serve --port 9090"
@@ -17,6 +43,7 @@ services:
     tty: true
     networks:
       - ${DOCKER_NETWORK:-de-toolkit-net}
+
 networks:
   de-toolkit-net:
     name: ${DOCKER_NETWORK:-de-toolkit-net}

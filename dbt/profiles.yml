@@ -4,21 +4,6 @@ config:
 #  warn_error: false
 #  log_format: true
 
-ch:
-  target: dev
-  outputs:
-    dev:
-      type: clickhouse
-      schema: de
-      port: 9000
-      user: de_user
-      password: de_pass
-      host: clickhouse
-      verify: True
-      secure: False
-
-
-
 de_toolkit_ch:
   outputs:
     dev:

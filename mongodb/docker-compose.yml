@@ -22,8 +22,10 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - MONGODB_EXTRA_FLAGS=--wiredTigerCacheSizeGB=2
+      - MONGODB_ENABLE_DIRECTORY_PER_DB=true
       - MONGODB_ENABLE_JOURNAL=true
       - MONGODB_ROOT_PASSWORD=${DE_PASSWORD:-de_pass}
       - MONGODB_USERNAME=${DE_USERNAME:-de_user}
+      - MONGODB_PASSWORD=${DE_PASSWORD:-de_pass}
       - MONGODB_DATABASE=${DE_DB_NAME:-de}
       - MONGODB_PORT_NUMBER=27017

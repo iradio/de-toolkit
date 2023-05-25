@@ -9,7 +9,7 @@ services:
       - "./dbt_project/:/usr/app"
       - "./profiles.yml:/root/.dbt/profiles.yml"
     ports:
-      - 9090:9090
+      - 9000:9090
     command: "docs serve --port 9090"
     environment:
       - DBT_USER=de_user

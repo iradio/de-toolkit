@@ -92,4 +92,4 @@ services:
       - AIRFLOW_USERNAME=${DE_USERNAME:-de_user}
       - AIRFLOW_EMAIL=user@example.com
     ports:
-      - '8080:8080'
+      - '8000:8080'

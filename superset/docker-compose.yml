@@ -52,7 +52,7 @@ services:
     user: "root"
     restart: unless-stopped
     ports:
-      - 3000:8088
+      - 3001:8088
     depends_on: *superset-depends-on
     volumes: *superset-volumes
     <<: *toolkit-common

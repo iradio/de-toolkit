@@ -7,7 +7,46 @@
 
 Не используейте `de-toolkit` в production!
 
-## Требования к окружению
+## Data Engineer Toolkit
+| Product | Local ports | Local address | Credentials | Internal hostname |
+| --- | --- | --- | --- | --- | 
+| **Processing** |
+| [Airflow](./airflow) | 8000 | [http://localhost:8000](http://localhost:8000) | l: `de_user`, p: `de_pass` | airflow* |
+| [Airbyte](./airbyte) | 8100, 8101, 8102 | [http://localhost:8100](http://localhost:8100)|  l: `de_user`, p: `de_pass`  | airbyte* |
+| [Dagster](./dagster) | 8200 | [http://localhost:8200](http://localhost:8200)| *no auth* | dagster |
+| [Prefect](./prefect) | 8300 | TBD | *no auth* use `prefect` console. [Docs](https://docs.prefect.io/)  | prefect* |
+| [Spark](./spark) | 8400 | [http://localhost:8400](http://localhost:8400) | *no auth* use check [spark/readme.md](./spark/readme.md) | spark, `spark://spark:7077` |
+| [Cronicle](./cronicle) | 8500 |  [http://localhost:8500](http://localhost:8500) | l: `admin`, p: `admin`  | cronicle |
+| [Meltano](./meltano/) | TBD | TBD | TBD | TBD|
+| **Storage** |
+| [PostgresSQL](./postgresql) | 5432 |  `postgresql://de_user:de_pass@localhost:5432/de` | db: `de`, l: `de_user`, p: `de_pass` | postgresql | 
+| [ClickHouse](./clickhouse/) | 8123, 9000 | [http://localhost:8123/play](http://localhost:8123/play), `clickhouse+http://de_user:de_pass@localhost:8123/de`, `clickhouse+native://de_user:de_pass@localhost:9000/de` | db: `de`, l: `de_user`, p: `de_pass` | clickhouse |
+| [MongoDB](./mongodb/) | 27017 | `mongodb://de_user:de_pass@localhost:27017/de` | db: `de`, l: `de_user`, p: `de_pass` | mongodb |
+| **DWH building** |
+| [dbt](./dbt/) | 9000 | [http://localhost:9000](http://localhost:9000) | *no auth* | dbt |
+| **Visulisation** |
+| [Metabase](./metabase/) | 3000 | [http://localhost:3000](http://localhost:3000) | *set user on first start* | metabase |  
+| [Superset](./superset/) | 3001 | [http://localhost:3001](http://localhost:3001) | l: `de_user`, p: `de_pass` | superset* |
+| **Analytics** |
+| [Jupyter](./jupyter/) | 4000 |  [http://localhost:4000](http://localhost:4000) | p: `de_pass` [change password instruction](./jupyter/notebooks/change_jypyter_pass.ipynb) | jupyter |
+
+
+## Quick start
+``` bash
+git clone https://github.com/iradio/de-toolkit.git
+cd de-toolkit
+```
+Далее выбираем нужный продукт и запускаем его через `docker-compose`. Например, старт `Postgres`. Часть продуктов запускается с флагном build, поэтому лучше использовать его по умолчанию.
+```bash
+cd postgresql
+docker-compose up -d --build
+```
+
+Все продукты запускаются с доступом к одной общей сети `de-toolkit-network` и доступны по hostname совпадающим с именем сервера.  
+Например: при подключении Postgresql к продукту Metabase нужно использовать в качестве адрес СУБД hostname: `postgresql`.
+
+
+## Requirements
 Работает везде, где есть:
 - `docker`
 - `docker-compose`
@@ -25,138 +64,16 @@ Linux - [Docker Desktop on Linux](https://docs.docker.com/desktop/install/linux-
 ``` bash
 docker run --rm "debian:bullseye-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))' 
 ```
-P.S.: на текущий момент автор собирает и тестирует сборки на `Windows 10 Home 64 + Docker Desktop on WSL2` . Hardware: `Intel i7-10710U 16GB RAM SSD`
-
-## Быстрый старт
-``` bash
-git clone https://github.com/iradio/de-toolkit.git
-cd de-toolkit
-```
-Далее выбираем нужную сборку и запускаем указанной командой:
-
-### Build: Postgres + Metabase
-``` bash
-docker-compose up docker-compose_pg_metabase.yml
-```
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`   
-Metabase: http://localhost:3000 *set user on first start*  
-
-### Build: Postgres + ClickHouse + Metabase
-``` bash
-docker-compose up docker-compose_pg_ch_metabase.yml
-```
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-ClickHouse: `clickhouse+http://pg_user:pg_pass@localhost:8123/de` , `clickhouse+native://pg_user:pg_pass@localhost:9000/de`  
-Metabase: http://localhost:3000 *set user on first start*  
-
-### Build: Cronicle + Postgres + Metabase
-``` bash
-docker-compose up docker-compose_cronicle_pg_metabase.yml
-```
-Cronicle: http://localhost:8080 `admin`/`admin`  
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Metabase: http://localhost:3000 *will create user on first start*   | de_user@toolkit.de
-
-### Build: Airflow + Postgres + Metabase
-``` bash
-docker-compose up docker-compose_airflow_pg_metabase.yml
-```
-Airflow: http://localhost:8080 `de_user`/`de_pass`  
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Metabase: http://localhost:3000 *will create user on first start*
-
-### Build: Airflow + Postgres + Superset
-``` bash
-docker-compose -f docker-compose_airflow_pg_superset.yml up -d
-```
-Airflow: http://localhost:8080 `de_user`/`de_pass`  
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Superset: http://localhost:3000 `de_user`/`de_pass`
+P.S.: на текущий момент автор собирает и тестирует сборки на `Windows 10 Home 64 + Docker Desktop on WSL2` . Hardware: `Intel i7-10710U 64GB RAM SSD`
 
 
-### Build: Airbyte + Postgres + Metabase
-``` bash
-docker-compose -f docker-compose_airbyte.yml --env-file ./airbyte/.env up -d
-```
-Airbyte: http://localhost:8000 *set user on first start*  
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Metabase: http://localhost:3000 *set user on first start*
-
-### Build: Jupyter + Postgres + Metabase
-``` bash
-docker compose -f "docker-compose_jupyter_pg_metabase.yml" up -d
-```
-Jupyter http://localhost:8888 `de_pass` [change password instruction](./jupyter/notebooks/change_jypyter_pass.ipynb)  
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Metabase: http://localhost:3000 *set user on first start*
-
-### Build: Spark + Jupyter + Postgres + Metabase
-``` bash
-docker compose -f "docker-compose_spark_jupyter_pg_metabase.yml" up -d --scale spark-worker=3
-```
-Where `--scale spark-worker=3` means the number of spark workers in your cluster.  
-
-Spark: http://localhost:8080 *no auth* use check [spark/readme.md](./spark/readme.md)
-Jupyter http://localhost:8888 `de_pass` [change password instruction](./jupyter/notebooks/change_jypyter_pass.ipynb)  
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Metabase: http://localhost:3000 *set user on first start*
-
-### Build: Prefect + Postgres + Metabase
-``` bash
-docker-compose up docker-compose_prefect_pg_metabase.yaml
-```
-Prefect: http://localhost:8080 *no auth* use `prefect` console. [Docs](https://docs.prefect.io/)  
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Metabase: http://localhost:4000 *set user on first start*
-
-### Build: Dagster + Postgres + Metabase
-``` bash
-docker-compose up docker-compose_dagster_pg_metabase.yaml
-```
-Dagster: http://localhost:8080 *no auth*. [Docs](https://docs.dagster.io/getting-started)  
-Postgres: `postgresql://pg_user:pg_pass@localhost:5432/de`  
-Metabase: http://localhost:3000 *set user on first start*
 
 ## Defaults 
-Переменные заданые в [.env файле](.env) (файл может быть скрыт в вашей системе).  
-По умолчанию везде, где можно используются:  
+Environment variables have definitions in `.env` file. Each directore have `.env` file inside (can be hidden by default in your OS).  
+Default credentials:  
 username: `de_user`  
 password: `de_pass`  
 
-## ПО, включенное в сборку
-### СУБД
-```
-├── PostgreSQL
-├── MongoDB *todo*
-├── ClickHouse
-```
-### ETL | ELT
-```
-├── ETL
-│   ├── Airflow
-│   ├── Cronicle
-│   ├── Spark
-│   ├── Prefect
-│   ├── Luigi *todo*
-│   ├── StreamSets *todo*
-├── E(tract)+L(load)
-│   ├── Airbyte
-│   ├── Metltano *todo*
-├── T(ransform)
-│   ├── dbt
-```
-### BI
-```
-├── Metabase
-├── Superset *todo*
-```
-### IDE 
-├── Jupyter
 
-### To be reviewed
-meltano  
-dagster  
-MLflow  
-Argo Workflows  
 ## Авторы
-- Тимур Алейников - [iradio](https://github.com/iradio)
+- Timur Aleinikov - [iradio](https://github.com/iradio)

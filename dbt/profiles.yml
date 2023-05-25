@@ -1,0 +1,60 @@
+config:
+  debug: false 
+#  quiet: true
+#  warn_error: false
+#  log_format: true
+
+ch:
+  target: dev
+  outputs:
+    dev:
+      type: clickhouse
+      schema: de
+      port: 9000
+      user: de_user
+      password: de_pass
+      host: clickhouse
+      verify: True
+      secure: False
+
+
+
+de_toolkit_ch:
+  outputs:
+    dev:
+      type: clickhouse
+      host: clickhouse
+      port: 9000
+      user: de_user
+      password: de_pass
+      schema: dbt
+      secure: False
+      verify: False
+      connect_timeout: 10
+
+  target: dev
+
+de_toolkit_pg:
+  outputs:
+
+    dev:
+      type: postgres
+      threads: 1
+      host: postgresql
+      port: 5432
+      user: de_user
+      pass: de_pass
+      dbname: de
+      schema: public
+        
+    prod:
+      type: postgres
+      threads: [1 or more]
+      host: [host]
+      port: [port]
+      user: [prod_username]
+      pass: [prod_password]
+      dbname: [dbname]
+      schema: [prod_schema]
+
+  target: dev

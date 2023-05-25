@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: de
+    database: de  
+    schema: public  
+    tables:
+      - name: currencies
+      - name: transactions
+

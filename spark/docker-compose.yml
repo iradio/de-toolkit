@@ -1,3 +1,6 @@
+# to run 3 spark workers use bash command below:
+# docker-compose up --scale spark-worker=3 -d
+
 version: '3.8'
 
 networks:

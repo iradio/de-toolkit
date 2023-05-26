@@ -10,8 +10,15 @@ x-toolkit-common: &toolkit-common
 
 services:
   jupyter:
-    image: jupyter/${JUPYTER_BASE:-base-notebook}:${JUPYTER_BASE_VERSION:-latest}
+    # image: jupyter/${JUPYTER_BASE:-base-notebook}:${JUPYTER_BASE_VERSION:-latest}
     # image: jupyter/datascience-notebook:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JUPYTER_BASE: "${JUPYTER_BASE:-pyspark-notebook}"
+        JUPYTER_BASE_VERSION: "${JUPYTER_BASE_VERSION:-spark-3.3.2}"
+    image: de-toolkit/jupyter:${JUPYTER_BASE_VERSION:-latest}
     user: root
     volumes:
       - "./jupyter_server_config.py:/home/${DE_USERNAME:-de_user}/.jupyter/jupyter_server_config.py:r"
@@ -25,3 +32,4 @@ services:
     environment:
       - NB_USER=${DE_USERNAME:-de_user}
       - CHOWN_HOME=yes
+      # - SPARK_HOME=spark://spark:7077

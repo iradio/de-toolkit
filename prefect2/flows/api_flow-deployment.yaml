@@ -1,0 +1,47 @@
+###
+### A complete description of a Prefect Deployment for flow 'api-flow'
+###
+name: marvin
+description: null
+version: cd004589861f8ae7b63b49ad008e22ff
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+work_pool_name: default-agent-pool
+tags: []
+parameters: {}
+schedule: null
+is_schedule_active: true
+infra_overrides: {}
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: api-flow
+manifest_path: null
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  _block_document_id: 7553e2f7-3296-4eb2-b47f-c4c256d24fe7
+  _block_document_name: anonymous-7e1c527d-e654-4a28-a3a1-7aa94d16dfa6
+  _is_anonymous: true
+  block_type_slug: process
+  _block_type_slug: process
+storage: null
+path: /root/flows
+entrypoint: catfacts.py:api_flow
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    url:
+      title: url
+      position: 0
+  required:
+  - url
+  definitions: null
+timestamp: '2023-05-26T14:21:37.143909+00:00'

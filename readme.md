@@ -18,7 +18,7 @@
 | [Airflow](./airflow) | 8000 | [http://localhost:8000](http://localhost:8000) | l: `de_user`, p: `de_pass` | airflow* |
 | [Airbyte](./airbyte) | 8100, 8101, 8102 | [http://localhost:8100](http://localhost:8100)|  l: `de_user`, p: `de_pass`  | airbyte* |
 | [Dagster](./dagster) | 8200 | [http://localhost:8200](http://localhost:8200)| *no auth* | dagster |
-| [Prefect](./prefect) | 8300 | TBD | *no auth* use `prefect` console. [Docs](https://docs.prefect.io/)  | prefect* |
+| [Prefect2](./prefect2) | 4200 | [http://localhost:4200](http://localhost:4200) | *no auth* [Docs](https://docs.prefect.io/)  | prefect* |
 | [Spark](./spark) | 8400 | [http://localhost:8400](http://localhost:8400) | *no auth* use check [spark/readme.md](./spark/readme.md) | spark, `spark://spark:7077` |
 | [Cronicle](./cronicle) | 8500 |  [http://localhost:8500](http://localhost:8500) | l: `admin`, p: `admin`  | cronicle |
 | [Meltano](./meltano/) | TBD | TBD | TBD | TBD|
@@ -26,6 +26,7 @@
 | [PostgresSQL](./postgresql) | 5432 |  `postgresql://de_user:de_pass@localhost:5432/de` | db: `de`, l: `de_user`, p: `de_pass` | postgresql | 
 | [ClickHouse](./clickhouse/) | 8123, 9000 | [http://localhost:8123/play](http://localhost:8123/play), `clickhouse+http://de_user:de_pass@localhost:8123/de`, `clickhouse+native://de_user:de_pass@localhost:9000/de` | db: `de`, l: `de_user`, p: `de_pass` | clickhouse |
 | [MongoDB](./mongodb/) | 27017 | `mongodb://de_user:de_pass@localhost:27017/de` | db: `de`, l: `de_user`, p: `de_pass` | mongodb |
+| [Minio](./minio/) | 9001,9002 |  [http://localhost:9001](http://localhost:9001) | l: `de_user`, p: `de_password` | minio |
 | **DWH building** |
 | [dbt](./dbt/) | 7000 | [http://localhost:7000](http://localhost:7000) | *no auth* | dbt* |
 | **Visualization** |

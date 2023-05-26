@@ -1,5 +1,13 @@
 version: '3.8'
 
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
 services:
   spark:
     image: docker.io/bitnami/spark:${SPARK_VERSION:-3.3}
@@ -12,8 +20,10 @@ services:
       - SPARK_USER=spark
     ports:
       - '8400:8080'
+    <<: *toolkit-common
+
   spark-worker:
-    image: docker.io/bitnami/spark:spark:${SPARK_VERSION:-3.3}
+    image: docker.io/bitnami/spark:${SPARK_VERSION:-3.3}
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
@@ -24,3 +34,5 @@ services:
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
       - SPARK_SSL_ENABLED=no
       - SPARK_USER=spark
+    <<: *toolkit-common
+

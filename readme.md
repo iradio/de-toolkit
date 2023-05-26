@@ -73,7 +73,7 @@ P.S.: на текущий момент автор собирает и тести
 
 
 ## Defaults 
-Environment variables have definitions in `.env` file. Each directore have `.env` file inside (can be hidden by default in your OS).  
+Environment variables have definitions in the `.env` file. Each directory has a `.env` file inside (which can be hidden by default in your OS).  
 Default credentials:  
 username: `de_user`  
 password: `de_pass`  

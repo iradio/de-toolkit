@@ -411,3 +411,6 @@ metabase/plugins/sample-database.db.mv.db
 
 # Superset
 superset/pythonpath_dev
+superset/docker/pythonpath_dev/.gitignore
+superset/docker/pythonpath_dev/superset_config_local.example
+superset/docker/pythonpath_dev/superset_config.py

@@ -3,6 +3,10 @@ version: '3.7'
 networks:
   de-toolkit-net:
     name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+volumes:
+  prefect_pg_db:
+  
 services:
   apollo:
     command: bash -c "./post-start.sh && npm run serve"
@@ -102,7 +106,7 @@ services:
     - 127.0.0.1:5432:5432/tcp
     restart: always
     volumes:
-    - "./prefect/pg_data:/var/lib/postgresql/data:rw"
+    - "prefect_pg_db:/var/lib/postgresql/data:rw"
   towel:
     command: python src/prefect_server/services/towel/__main__.py
     depends_on:

@@ -27,7 +27,7 @@
 | [ClickHouse](./clickhouse/) | 8123, 9000 | [http://localhost:8123/play](http://localhost:8123/play), `clickhouse+http://de_user:de_pass@localhost:8123/de`, `clickhouse+native://de_user:de_pass@localhost:9000/de` | db: `de`, l: `de_user`, p: `de_pass` | clickhouse |
 | [MongoDB](./mongodb/) | 27017 | `mongodb://de_user:de_pass@localhost:27017/de` | db: `de`, l: `de_user`, p: `de_pass` | mongodb |
 | **DWH building** |
-| [dbt](./dbt/) | 9000 | [http://localhost:9000](http://localhost:9000) | *no auth* | dbt* |
+| [dbt](./dbt/) | 7000 | [http://localhost:7000](http://localhost:7000) | *no auth* | dbt* |
 | **Visualization** |
 | [Metabase](./metabase/) | 3000 | [http://localhost:3000](http://localhost:3000) | *set user on first start* | metabase |  
 | [Superset](./superset/) | 3001 | [http://localhost:3001](http://localhost:3001) | l: `de_user`, p: `de_pass` | superset* |

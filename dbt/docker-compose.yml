@@ -35,8 +35,8 @@ services:
       - "./dbt_project/:/usr/app"
       - "./profiles.yml:/root/.dbt/profiles.yml:r"
     ports:
-      - 9000:9090
-    command: "docs serve --port 9090"
+      - 7000:7000
+    command: "docs serve --port 7000"
     environment:
       - DBT_USER=de_user
       - DBT_PASSWORD=de_pass

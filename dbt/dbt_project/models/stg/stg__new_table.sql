@@ -1,0 +1,1 @@
+select * from {{ref('stg__pg_stat_database')}}

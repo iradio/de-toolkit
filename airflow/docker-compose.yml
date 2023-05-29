@@ -3,6 +3,7 @@ version: '3.8'
 volumes:
   airflow_postgresql_data:
   airflow_redis_data:
+  airflow_logs:
 
 services:
 # airflow (depends on postgresql)
@@ -32,6 +33,7 @@ services:
       - redis
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
+      - "airflow_logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
     environment:
@@ -55,6 +57,7 @@ services:
       - redis
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
+      - "airflow_logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
     environment:
@@ -77,8 +80,10 @@ services:
       - redis    
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
+      - "airflow_logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
+      - "/var/run/docker.sock:/var/run/docker.sock:rw" #to run docker containers using DockerOperator
     environment:
       - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=

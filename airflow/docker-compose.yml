@@ -49,6 +49,7 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_WEBSERVER_HOST=airflow
+      - "/var/run/docker.sock:/var/run/docker.sock:rw" #to run docker containers using DockerOperator
   airflow-scheduler:
     image: bitnami/airflow-scheduler:${AIRFLOW_VERSION:-latest}
     depends_on:
@@ -83,7 +84,6 @@ services:
       - "airflow_logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
-      - "/var/run/docker.sock:/var/run/docker.sock:rw" #to run docker containers using DockerOperator
     environment:
       - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=

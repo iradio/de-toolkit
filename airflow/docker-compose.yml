@@ -5,6 +5,15 @@ volumes:
   airflow_redis_data:
   airflow_logs:
 
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+
 services:
 # airflow (depends on postgresql)
   airflow-postgresql:
@@ -20,12 +29,14 @@ services:
       - POSTGRESQL_PASSWORD=${DE_PASSWORD:-de_pass}
       #- ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
+    <<: *toolkit-common
   redis:
     image: 'bitnami/redis:latest'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - "airflow_redis_data:/bitnami/redis"
+    <<: *toolkit-common
   airflow-worker:
     image: bitnami/airflow-worker:${AIRFLOW_VERSION:-latest}
     depends_on:
@@ -33,6 +44,7 @@ services:
       - redis
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
+      - "./include:/opt/bitnami/airflow/include"
       - "airflow_logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
@@ -50,6 +62,13 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_WEBSERVER_HOST=airflow
+      - PYTHONPATH=/opt/bitnami/airflow
+      - AIRFLOW__CORE__XCOM_BACKEND=include.xcom_backend_json.CustomXComBackendJSON
+      - MINIO_IP=${MINIO_IP}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - XCOM_BUCKET_NAME=${XCOM_BUCKET_NAME:-airflow-xcom}
+    <<: *toolkit-common
   airflow-scheduler:
     image: bitnami/airflow-scheduler:${AIRFLOW_VERSION:-latest}
     depends_on:
@@ -58,6 +77,7 @@ services:
       - redis
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
+      - "./include:/opt/bitnami/airflow/include"
       - "airflow_logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
@@ -74,6 +94,13 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_WEBSERVER_HOST=airflow
+      - PYTHONPATH=/opt/bitnami/airflow
+      - AIRFLOW__CORE__XCOM_BACKEND=include.xcom_backend_json.CustomXComBackendJSON
+      - MINIO_IP=${MINIO_IP}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - XCOM_BUCKET_NAME=${XCOM_BUCKET_NAME:-airflow-xcom}
+    <<: *toolkit-common
   airflow:
     image: bitnami/airflow:${AIRFLOW_VERSION:-latest}
     depends_on:
@@ -81,6 +108,7 @@ services:
       - redis    
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
+      - "./include:/opt/bitnami/airflow/include"
       - "airflow_logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
@@ -95,6 +123,15 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_PASSWORD=${DE_PASSWORD:-de_pass}
       - AIRFLOW_USERNAME=${DE_USERNAME:-de_user}
+      - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_EMAIL=user@example.com
+      # CUSTOM XCOM SECTION depends on minio service
+      - PYTHONPATH=/opt/bitnami/airflow
+      - AIRFLOW__CORE__XCOM_BACKEND=include.xcom_backend_json.CustomXComBackendJSON
+      - MINIO_IP=${MINIO_IP}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - XCOM_BUCKET_NAME=${XCOM_BUCKET_NAME:-airflow-xcom}
     ports:
       - '8000:8080'
+    <<: *toolkit-common

@@ -6,3 +6,4 @@
 #pandas
 #pytest==4.0.1
 #petl 
+minio

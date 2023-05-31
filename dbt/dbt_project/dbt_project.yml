@@ -37,4 +37,4 @@ models:
     stg:
       +materialized: table
     cdm:
-      +materialized: view
+      +materialized: table

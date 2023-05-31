@@ -38,8 +38,8 @@ services:
       - "./plugins:/opt/bitnami/airflow/plugins"
       - "/var/run/docker.sock:/var/run/docker.sock:rw" #to run docker containers using DockerOperator
     environment:
-      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
-      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_FERNET_KEY=${AIRFLOW_FERNET_KEY}
+      - AIRFLOW_SECRET_KEY=${AIRFLOW_SECRET_KEY}
       - AIRFLOW_EXECUTOR=CeleryExecutor
       - AIRFLOW_USERNAME=${DE_USERNAME:-de_user}
       - AIRFLOW_PASSWORD=${DE_PASSWORD:-de_pass}
@@ -62,8 +62,8 @@ services:
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
     environment:
-      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
-      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_FERNET_KEY=${AIRFLOW_FERNET_KEY}
+      - AIRFLOW_SECRET_KEY=${AIRFLOW_SECRET_KEY}
       - AIRFLOW_EXECUTOR=CeleryExecutor
       - AIRFLOW_USERNAME=${DE_USERNAME:-de_user}
       - AIRFLOW_PASSWORD=${DE_PASSWORD:-de_pass}
@@ -85,8 +85,8 @@ services:
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
     environment:
-      - AIRFLOW_FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
-      - AIRFLOW_SECRET_KEY=a25mQ1FHTUh3MnFRSk5KMEIyVVU2YmN0VGRyYTVXY08=
+      - AIRFLOW_FERNET_KEY=${AIRFLOW_FERNET_KEY}
+      - AIRFLOW_SECRET_KEY=${AIRFLOW_SECRET_KEY}
       - AIRFLOW_EXECUTOR=CeleryExecutor
       - AIRFLOW_DATABASE_HOST=airflow-postgresql
       - AIRFLOW_DATABASE_PORT_NUMBER=${AIRFLOW_DATABASE_PORT:-15432}

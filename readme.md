@@ -1,15 +1,16 @@
 # de-toolkit is toolkit and sandbox for Data Engineers
-`de-toolkit` - набор open source программного обеспечения, предназначенный для самостоятельного обучения профессии инженера данных. Набор построен на основе `docker` и представляет собой репозиторий `docker-compose` инструкций по развертыванию продуктов в общей виртуальной сети `de-toolkit-network`, а также необходимых файлов конфигурации, инициализации и примеров для демонстрации работы инструментов.
+`de-toolkit` is a collection of open-source software designed for self-study as a data engineer. The kit is built on top of `docker` and `docker-compose`. 
+The repository contains docker-compose files that deploy products on the de-toolkit-network shared virtual network, as well as the necessary configuration files, initialization, and examples to demonstrate how the tools work.
 
-В `de-toolkit` включаются инструменты и системы из таких категорий как:
+`de-toolkit` includes tools and systems from categories such as:
 - ETL / ELT
 - Databases
 - DWH management
 - BI
 - Data Analysis
 
-**Проект создается и поставляется в образовательных целях.**  
-**Не используейте `de-toolkit` в production!**
+**The project is created and delivered for educational purposes.**
+**Don't use `de-toolkit` in production!**
 
 ## Data Engineer Toolkit
 | Product | Local ports | Local address | Credentials | Internal hostname |
@@ -21,7 +22,7 @@
 | [Prefect2](./prefect2) | 4200 | [http://localhost:4200](http://localhost:4200) | *no auth* [Docs](https://docs.prefect.io/)  | prefect* |
 | [Spark](./spark) | 8400 | [http://localhost:8400](http://localhost:8400) | *no auth* use check [spark/readme.md](./spark/readme.md) | spark, `spark://spark:7077` |
 | [Cronicle](./cronicle) | 8500 |  [http://localhost:8500](http://localhost:8500) | l: `admin`, p: `admin`  | cronicle |
-| [Meltano](./meltano/) | TBD | TBD | TBD | TBD|
+| [Meltano](./meltano/) | 5000 | [http://localhost:5000](http://localhost:5000) | *no auth* | meltano* |
 | **Storage** |
 | [PostgresSQL](./postgresql) | 5432 |  `postgresql://de_user:de_pass@localhost:5432/de` | db: `de`, l: `de_user`, p: `de_pass` | postgresql | 
 | [ClickHouse](./clickhouse/) | 8123, 9000 | [http://localhost:8123/play](http://localhost:8123/play), `clickhouse+http://de_user:de_pass@localhost:8123/de`, `clickhouse+native://de_user:de_pass@localhost:9000/de` | db: `de`, l: `de_user`, p: `de_pass` | clickhouse |
@@ -41,18 +42,16 @@
 git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
 ```
-Далее выбираем нужный продукт и запускаем его через `docker-compose`. Например, старт `Postgres`. Часть продуктов запускается с флагном build, поэтому лучше использовать его по умолчанию.
+Select the product and run it via `docker-compose`.  Some products should be launched with the build flag, so it's better to use it by default. For example, start `Postgres`.
 ```bash
 cd postgresql
 docker-compose up -d --build
 ```
 
-Все продукты запускаются с доступом к одной общей сети `de-toolkit-network` и доступны по hostname совпадающим с именем сервера.  
-Например: при подключении Postgresql к продукту Metabase нужно использовать в качестве адрес СУБД hostname: `postgresql`.
-
+All products starts with access to the same shared network `de-toolkit-network`, and are accessible by hostname matching the server name.
+For example: when connecting Postgresql to the Metabase product, you have to use hostname: `postgresql` as the DBMS address.
 
 ## Requirements
-Работает везде, где есть:
 - `docker`
 - `docker-compose`
 
@@ -62,15 +61,13 @@ Mac - [Docker Desktop on Mac](https://docs.docker.com/desktop/install/mac-instal
 
 Linux - [Docker Desktop on Linux](https://docs.docker.com/desktop/install/linux-install/)
 
-Достаточный объем доступной docker оперативной памяти. Нужно более 4GB. 
+Sufficient amount of available docker RAM. More than 8GB.
 
-Можно проверить командой:
-
+How to check available docker memory:
 ``` bash
 docker run --rm "debian:bullseye-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))' 
 ```
-P.S.: на текущий момент автор собирает и тестирует сборки на `Windows 10 Home 64 + Docker Desktop on WSL2` . Hardware: `Intel i7-10710U 64GB RAM SSD`
-
+P.S.: tested on `Windows 10 Home 64 + Docker Desktop on WSL2` . Hardware: `Intel i7-10710U 64GB RAM SSD`
 
 
 ## Defaults 
@@ -80,5 +77,5 @@ username: `de_user`
 password: `de_pass`  
 
 
-## Авторы
-- Timur Aleinikov - [iradio](https://github.com/iradio)
+## Author
+- Tim Alein - [iradio](https://github.com/iradio)

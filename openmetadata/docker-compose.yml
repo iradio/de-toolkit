@@ -163,3 +163,7 @@ services:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
+      # dbt ingestion. de-tolkit dev only. Use S3 for production.
+      # - ../dbt/dbt_project:/dbt/dbt_project:ro
+      - ../dbt/dbt_project/target/manifest.json:/dbt/manifest.json:ro
+      - ../dbt/dbt_project/target/run_results.json:/dbt/run_results.json:ro

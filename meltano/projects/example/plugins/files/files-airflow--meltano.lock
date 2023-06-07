@@ -1,0 +1,14 @@
+{
+  "plugin_type": "files",
+  "name": "files-airflow",
+  "namespace": "files_airflow",
+  "variant": "meltano",
+  "label": "Airflow",
+  "docs": "https://hub.meltano.com/files/files-airflow--meltano",
+  "repo": "https://github.com/meltano/files-airflow",
+  "pip_url": "git+https://github.com/meltano/files-airflow.git",
+  "logo_url": "https://hub.meltano.com/assets/logos/files/airflow.png",
+  "update": {
+    "orchestrate/dags/meltano.py": true
+  }
+}

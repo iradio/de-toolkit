@@ -5,3 +5,8 @@ environments:
 - name: dev
 - name: staging
 - name: prod
+plugins:
+  files:
+  - name: files-airflow
+    variant: meltano
+    pip_url: git+https://github.com/meltano/files-airflow.git

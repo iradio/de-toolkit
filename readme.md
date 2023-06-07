@@ -35,7 +35,8 @@ The repository contains docker-compose files that deploy products on the de-tool
 | [Superset](./superset/) | 3001 | [http://localhost:3001](http://localhost:3001) | l: `de_user`, p: `de_pass` | superset* |
 | **Analytics** |
 | [Jupyter](./jupyter/) | 4000 |  [http://localhost:4000](http://localhost:4000) | p: `de_pass` [change password instruction](./jupyter/notebooks/change_jypyter_pass.ipynb) | jupyter |
-
+| **Metadata** |
+| [Open Metadata](./openmetadata/) | 8585,8586, 8587, 9200, 9300|  [http://localhost:8585](http://localhost:8585) | l: `admin`, p: `admin` | omd-* |
 
 ## Quick start
 ``` bash

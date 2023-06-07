@@ -1,0 +1,31 @@
+version: '3.8'
+
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+services:
+  meltano-ui:
+    image: meltano/meltano:${MELTANO_VERSION:-latest}
+    volumes:
+      - "./projects/example:/project"
+    command: ui
+    expose:
+      - 5000
+    ports:
+      - 5000:5000
+    # restart: unless-stopped
+    <<: *toolkit-common
+  meltano-cli:
+    image: meltano/meltano:${MELTANO_VERSION:-latest}
+    command: init
+    volumes:
+      - "./projects/example:/project"
+    tty: true
+    # restart: unless-stopped
+    <<: *toolkit-common

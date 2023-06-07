@@ -16,7 +16,7 @@ dagster/home
 dagster/deploy_docker
 
 # meltano
-meltano/projects
+# meltano/projects
 
 # jupyter
 jupyter/notebooks/
@@ -38,8 +38,9 @@ cronicle/plugins/*/
 postgresql/data/*/
 
 # airflow
-airflow/dags/*/
 airflow/dags/*.py
+!airflow/dags/*example*.py
+
 airflow/redis/*/
 airflow/postgresql_data
 

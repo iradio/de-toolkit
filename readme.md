@@ -21,7 +21,7 @@
 | [Prefect2](./prefect2) | 4200 | [http://localhost:4200](http://localhost:4200) | *no auth* [Docs](https://docs.prefect.io/)  | prefect* |
 | [Spark](./spark) | 8400 | [http://localhost:8400](http://localhost:8400) | *no auth* use check [spark/readme.md](./spark/readme.md) | spark, `spark://spark:7077` |
 | [Cronicle](./cronicle) | 8500 |  [http://localhost:8500](http://localhost:8500) | l: `admin`, p: `admin`  | cronicle |
-| [Meltano](./meltano/) | TBD | TBD | TBD | TBD|
+| [Meltano](./meltano/) | 5000 | [http://localhost:5000](http://localhost:5000) | *no auth* | meltano* |
 | **Storage** |
 | [PostgresSQL](./postgresql) | 5432 |  `postgresql://de_user:de_pass@localhost:5432/de` | db: `de`, l: `de_user`, p: `de_pass` | postgresql | 
 | [ClickHouse](./clickhouse/) | 8123, 9000 | [http://localhost:8123/play](http://localhost:8123/play), `clickhouse+http://de_user:de_pass@localhost:8123/de`, `clickhouse+native://de_user:de_pass@localhost:9000/de` | db: `de`, l: `de_user`, p: `de_pass` | clickhouse |

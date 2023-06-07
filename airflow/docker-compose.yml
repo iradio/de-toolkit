@@ -63,11 +63,13 @@ services:
       - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_WEBSERVER_HOST=airflow
       - PYTHONPATH=/opt/bitnami/airflow
+      # Custom XCOM backend section
       - AIRFLOW__CORE__XCOM_BACKEND=include.xcom_backend_json.CustomXComBackendJSON
       - MINIO_IP=${MINIO_IP}
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
       - XCOM_BUCKET_NAME=${XCOM_BUCKET_NAME:-airflow-xcom}
+      # end of Custom XCOM backend section
     <<: *toolkit-common
   airflow-scheduler:
     image: bitnami/airflow-scheduler:${AIRFLOW_VERSION:-latest}
@@ -95,11 +97,13 @@ services:
       - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_WEBSERVER_HOST=airflow
       - PYTHONPATH=/opt/bitnami/airflow
+      # Custom XCOM backend section
       - AIRFLOW__CORE__XCOM_BACKEND=include.xcom_backend_json.CustomXComBackendJSON
       - MINIO_IP=${MINIO_IP}
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
       - XCOM_BUCKET_NAME=${XCOM_BUCKET_NAME:-airflow-xcom}
+      # end of Custom XCOM backend section
     <<: *toolkit-common
   airflow:
     image: bitnami/airflow:${AIRFLOW_VERSION:-latest}
@@ -125,13 +129,14 @@ services:
       - AIRFLOW_USERNAME=${DE_USERNAME:-de_user}
       - AIRFLOW_LOAD_EXAMPLES=no
       - AIRFLOW_EMAIL=user@example.com
-      # CUSTOM XCOM SECTION depends on minio service
       - PYTHONPATH=/opt/bitnami/airflow
+      # Custom XCOM backend section
       - AIRFLOW__CORE__XCOM_BACKEND=include.xcom_backend_json.CustomXComBackendJSON
       - MINIO_IP=${MINIO_IP}
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
       - XCOM_BUCKET_NAME=${XCOM_BUCKET_NAME:-airflow-xcom}
+      # end of Custom XCOM backend section
     ports:
       - '8000:8080'
     <<: *toolkit-common

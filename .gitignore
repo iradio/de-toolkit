@@ -1,4 +1,5 @@
-venv 
+venv
+.venv
 # superset
 superset/pythonpath_dev
 !superset/pythonpath_dev/.gitignore

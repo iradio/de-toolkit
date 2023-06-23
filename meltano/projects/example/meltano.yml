@@ -6,6 +6,21 @@ environments:
 - name: staging
 - name: prod
 plugins:
+  extractors:
+  - name: tap-csv
+    variant: meltanolabs
+    pip_url: git+https://github.com/MeltanoLabs/tap-csv.git
+    config:
+      add_metadata_columns: false
+      csv_files_definition: ''
+  loaders:
+  - name: target-postgres
+    variant: transferwise
+    pip_url: pipelinewise-target-postgres
+  transformers:
+  - name: dbt-postgres
+    variant: dbt-labs
+    pip_url: dbt-core~=1.3.0 dbt-postgres~=1.3.0
   files:
   - name: files-airflow
     variant: meltano

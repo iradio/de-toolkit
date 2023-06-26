@@ -1,9 +1,9 @@
 version: '3'
 
 volumes:
-  airflow_postgresql_data:
-  airflow_redis_data:
-  airflow_logs:
+  postgresql_data:
+  redis_data:
+  logs:
 
 networks:
   de-toolkit-net:
@@ -21,7 +21,7 @@ services:
     ports:
       - "15432:15432"
     volumes:
-      - "airflow_postgresql_data:/bitnami/postgresql"
+      - "postgresql_data:/bitnami/postgresql"
     environment:
       - POSTGRESQL_DATABASE=${AIRFLOW_DATABASE:-airflow}
       - POSTGRESQL_PORT_NUMBER=${AIRFLOW_DATABASE_PORT:-15432}
@@ -35,7 +35,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
-      - "airflow_redis_data:/bitnami/redis"
+      - "redis_data:/bitnami/redis"
     <<: *toolkit-common
   airflow-worker:
     image: bitnami/airflow-worker:${AIRFLOW_VERSION:-latest}
@@ -45,7 +45,7 @@ services:
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
       - "./include:/opt/bitnami/airflow/include"
-      - "airflow_logs:/opt/bitnami/airflow/logs"
+      - "logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
       - "/var/run/docker.sock:/var/run/docker.sock:rw" #to run docker containers using DockerOperator
@@ -80,7 +80,7 @@ services:
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
       - "./include:/opt/bitnami/airflow/include"
-      - "airflow_logs:/opt/bitnami/airflow/logs"
+      - "logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
     environment:
@@ -113,7 +113,7 @@ services:
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
       - "./include:/opt/bitnami/airflow/include"
-      - "airflow_logs:/opt/bitnami/airflow/logs"
+      - "logs:/opt/bitnami/airflow/logs"
       - "./dags/requirements.txt:/bitnami/python/requirements.txt"
       - "./plugins:/opt/bitnami/airflow/plugins"
     environment:

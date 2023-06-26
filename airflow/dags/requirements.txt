@@ -7,3 +7,5 @@
 #pytest==4.0.1
 #petl 
 minio
+# xmljson
+# psycopg2

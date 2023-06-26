@@ -45,7 +45,7 @@ class CustomXComBackendJSON(BaseXCom):
         client.put_object(
             CustomXComBackendJSON.BUCKET_NAME,
             minio_key,
-            io.BytesIO(bytes(json.dumps(value), 'utf-8')),
+            io.BytesIO(json.dumps(value, ensure_ascii=False).encode('utf8')),
             -1, # -1 = unknown file size
             part_size=10*1024*1024,
         )
@@ -82,4 +82,4 @@ class CustomXComBackendJSON(BaseXCom):
         )
 
         # return the contents of the retrieved object
-        return json.loads(response.read())
+        return json.loads(response.read().decode("utf8"))

@@ -1,4 +1,5 @@
 venv 
+.venv
 # superset
 superset/pythonpath_dev
 !superset/pythonpath_dev/.gitignore
@@ -412,3 +413,5 @@ metabase/plugins/sample-database.db.mv.db
 # Superset
 superset/pythonpath_dev
 superset/docker/pythonpath_dev/
+ngnix/app/data-20230625-structure-20210307.zip
+ngnix/app/data-20230626-structure-20210307.zip

@@ -1,0 +1,17 @@
+version: '3'
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common: &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}  
+
+services:
+  nginx:
+    image: docker.io/bitnami/nginx:${NGINX_VERSION:-1.25}
+    ports:
+      - '80:8080'
+    volumes:
+      - './app:/app:ro'
+    <<: *toolkit-common

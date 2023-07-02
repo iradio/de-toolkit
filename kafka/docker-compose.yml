@@ -1,0 +1,115 @@
+version: '3.8'
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
+x-toolkit-common:
+  &toolkit-common
+  networks:
+    - ${DOCKER_NETWORK:-de-toolkit-net}
+
+volumes:
+  data:
+
+
+services:
+  # Confluent Platform
+  broker:
+    image: confluentinc/cp-server:${CP_VERSION}
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    volumes:
+      - data:/var/lib/kafka/data:rw
+      - ./jars:/etc/kafka-connect/jars
+      - ./secrets:/etc/kafka/secrets
+    environment:
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_BROKER_ID: 1
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_LISTENERS: 'PLAINTEXT://broker:29092,CONTROLLER://broker:29091,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:29091'
+
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      # Replication factor -> 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      # Authentication
+      KAFKA_SUPER_USERS: User:admin;User:mds;User:superUser;User:ANONYMOUS
+      KAFKA_AUTHORIZER_CLASS_NAME: "org.apache.kafka.metadata.authorizer.StandardAuthorizer"
+      # Logging
+      KAFKA_LOG4J_LOGGERS: "kafka.authorizer.logger=INFO"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      # Metrics
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      CONFLUENT_METRICS_ENABLE: "false"
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      CONFLUENT_SUPPORT_CUSTOMER_ID: anonymous
+      # Broker-side Schema Validation
+      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      # Disable features not supporting KRaft
+      KAFKA_CONFLUENT_CLUSTER_LINK_ENABLE: "false"
+      KAFKA_CONFLUENT_BALANCER_ENABLE: "false"
+      # JMX
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+    command: >
+      bash -c "sed -i '/KAFKA_ZOOKEEPER_CONNECT/d' /etc/confluent/docker/configure && sed -i 's/cub zk-ready/echo ignore zk-ready/' /etc/confluent/docker/ensure && export UUID=`kafka-storage random-uuid` && echo 'kafka-storage format --ignore-formatted -t $$UUID -c /etc/kafka/kafka.properties' >> /etc/confluent/docker/ensure && /etc/confluent/docker/run"
+    <<: *toolkit-common
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:${CP_VERSION}
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./secrets:/etc/schema-registry/secrets
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: broker:29092
+    <<: *toolkit-common
+
+  kafka-akhq:
+    image: tchiotludo/akhq
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "broker:29092"
+              schema-registry:
+                url: "http://schema-registry:8081"
+                type: confluent
+              connect:
+                - name: "connect"
+                  url: "http://connect:8083"
+    <<: *toolkit-common
+    ports:
+      - 8000:8080
+    links:
+      - broker
+
+#  c3:
+#    image: confluentinc/cp-enterprise-control-center:${CP_VERSION}
+#    ports:
+#      - "9021:9021"
+#    environment:
+#      CONTROL_CENTER_MODE_ENABLE: "management"
+#      CONTROL_CENTER_BOOTSTRAP_SERVERS: PLAINTEXT://broker:29092
+#      CONTROL_CENTER_STREAMS_NUM_STREAM_THREADS: 4
+#      CONTROL_CENTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+#
+#      CONTROL_CENTER_REPLICATION_FACTOR: 1
+#      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+#      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+#      CONFLUENT_METRICS_TOPIC_REPLICATION: 1

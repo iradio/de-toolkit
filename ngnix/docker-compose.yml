@@ -3,9 +3,10 @@ networks:
   de-toolkit-net:
     name: ${DOCKER_NETWORK:-de-toolkit-net}
 
-x-toolkit-common: &toolkit-common
+x-toolkit-common:
+  &toolkit-common
   networks:
-    - ${DOCKER_NETWORK:-de-toolkit-net}  
+    - ${DOCKER_NETWORK:-de-toolkit-net}
 
 services:
   nginx:

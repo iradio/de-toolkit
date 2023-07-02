@@ -5,17 +5,18 @@ volumes:
   redis_data:
   logs:
 
+
 networks:
   de-toolkit-net:
     name: ${DOCKER_NETWORK:-de-toolkit-net}
 
-x-toolkit-common: &toolkit-common
+x-toolkit-common:
+  &toolkit-common
   networks:
-    - ${DOCKER_NETWORK:-de-toolkit-net}  
-
+    - ${DOCKER_NETWORK:-de-toolkit-net}
 
 services:
-# airflow (depends on postgresql)
+  # airflow (depends on postgresql)
   airflow-postgresql:
     image: bitnami/postgresql:${AIRFLOW_DATABASE_VERSION:-latest}
     ports:
@@ -109,7 +110,7 @@ services:
     image: bitnami/airflow:${AIRFLOW_VERSION:-latest}
     depends_on:
       - airflow-postgresql
-      - redis    
+      - redis
     volumes:
       - "./dags:/opt/bitnami/airflow/dags"
       - "./include:/opt/bitnami/airflow/include"

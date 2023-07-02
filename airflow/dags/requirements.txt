@@ -7,5 +7,6 @@
 #pytest==4.0.1
 #petl 
 minio
+xmltodict
 # xmljson
-# psycopg2
+psycopg2-binary

@@ -1,7 +1,13 @@
+.vscode
 venv 
 .venv
-# superset
+
+# nginx
+ngins/app
+ngnix/app/
+# Superset
 superset/pythonpath_dev
+superset/docker/pythonpath_dev/
 !superset/pythonpath_dev/.gitignore
 !superset/pythonpath_dev/superset_config.py
 !superset/pythonpath_dev/superset_config_local.example
@@ -410,8 +416,4 @@ MigrationBackup/
 
 metabase/plugins/sample-database.db.mv.db
 
-# Superset
-superset/pythonpath_dev
-superset/docker/pythonpath_dev/
-ngnix/app/data-20230625-structure-20210307.zip
-ngnix/app/data-20230626-structure-20210307.zip
+

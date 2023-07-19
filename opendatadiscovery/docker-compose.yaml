@@ -1,4 +1,9 @@
 version: "3.3"
+
+networks:
+  de-toolkit-net:
+    name: ${DOCKER_NETWORK:-de-toolkit-net}
+
 services:
   odd-database:
     image: bitnami/postgresql:${PG_VERSION:-latest}
@@ -7,20 +12,25 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
-    ports:
-      - 5432:5432
+    # ports: 
+    # - 5432:5432
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
 
   odd-platform:
     image: ghcr.io/opendatadiscovery/odd-platform:${ODD_PLATFORM_VERSION:-latest}
     restart: always
     environment:
+      # https://docs.opendatadiscovery.org/configuration-and-deployment/odd-platform
       - SPRING_DATASOURCE_URL=jdbc:postgresql://odd-database:5432/${POSTGRES_DATABASE}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - odd-database
     ports:
-      - 8080:8080
+      - 9400:8080
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
 
   odd-platform-enricher:
     image: python:3.9.12-alpine3.15
@@ -31,10 +41,13 @@ services:
       - sh
       - ./injector/start.sh
     environment:
+      # https://docs.opendatadiscovery.org/configuration-and-deployment/odd-platform
       - PLATFORM_HOST_URL=${PLATFORM_HOST_URL}
       - PYTHONUNBUFFERED=1
     depends_on:
       - odd-platform
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
 
   sample-postgresql:
     image: bitnami/postgresql:${PG_VERSION:-latest}
@@ -45,6 +58,8 @@ services:
       - POSTGRES_USER=${SAMPLE_POSTGRES_USER}
       - POSTGRES_PASSWORD=${SAMPLE_POSTGRES_PASSWORD}
       - POSTGRES_DATABASE=${SAMPLE_POSTGRES_DATABASE}
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}
 
   odd-collector:
     image: ghcr.io/opendatadiscovery/odd-collector:${ODD_PLATFORM_VERSION:-latest}
@@ -59,3 +74,5 @@ services:
       - SAMPLE_POSTGRES_PASSWORD=${SAMPLE_POSTGRES_PASSWORD}
     depends_on:
       - sample-postgresql
+    networks:
+      - ${DOCKER_NETWORK:-de-toolkit-net}

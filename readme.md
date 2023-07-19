@@ -37,6 +37,7 @@ The repository contains docker-compose files that deploy products on the de-tool
 | [Jupyter](./jupyter/) | 4000 |  [http://localhost:4000](http://localhost:4000) | p: `de_pass` [change password instruction](./jupyter/notebooks/change_jypyter_pass.ipynb) | jupyter |
 | **Metadata** |
 | [Open Metadata](./openmetadata/) | 8585,8586, 8587, 9200, 9300|  [http://localhost:8585](http://localhost:8585) | l: `admin`, p: `admin` | omd-* |
+| [Open Data Discovery](./opendatadiscovery/) | 9400 |  [http://localhost:9400](http://localhost:9400) | no auth | odd-* |
 
 ## Quick start
 ``` bash

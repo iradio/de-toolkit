@@ -1,0 +1,3 @@
+mage-ai[clickhouse]
+mage-ai[postgres]
+mage-ai[dbt]

@@ -23,6 +23,7 @@ The repository contains docker-compose files that deploy products on the de-tool
 | [Spark](./spark) | 8400 | [http://localhost:8400](http://localhost:8400) | *no auth* use check [spark/readme.md](./spark/readme.md) | spark, `spark://spark:7077` |
 | [Cronicle](./cronicle) | 8500 |  [http://localhost:8500](http://localhost:8500) | l: `admin`, p: `admin`  | cronicle |
 | [Meltano](./meltano/) | 5000 | [http://localhost:5000](http://localhost:5000) | *no auth* | meltano* |
+| [Mage](./mage/) | 6789 | [http://localhost:6789](http://localhost:6789) | *no auth* | mage |
 | **Storage** |
 | [PostgresSQL](./postgresql) | 5432 |  `postgresql://de_user:de_pass@localhost:5432/de` | db: `de`, l: `de_user`, p: `de_pass` | postgresql | 
 | [ClickHouse](./clickhouse/) | 8123, 9000 | [http://localhost:8123/play](http://localhost:8123/play), `clickhouse+http://de_user:de_pass@localhost:8123/de`, `clickhouse+native://de_user:de_pass@localhost:9000/de` | db: `de`, l: `de_user`, p: `de_pass` | clickhouse |

@@ -416,4 +416,9 @@ MigrationBackup/
 
 metabase/plugins/sample-database.db.mv.db
 
+# mage
 
+mage/mage_project/*
+!mage/mage_project/.gitkeep
+mage/mage_data/*
+!mage/mage_data/.gitkeep

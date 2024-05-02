@@ -10,6 +10,11 @@ services:
       dockerfile: Dockerfile
     environment:
       USER_CODE_PATH: /home/src/${PROJECT_NAME}
+      POSTGRES_DB: ${DE_DB_NAME}
+      POSTGRES_USER: ${DE_USERNAME}
+      POSTGRES_PASSWORD: ${DE_PASSWORD}
+      POSTGRES_HOST: postgresql
+      PG_HOST_PORT: 5432
       # ENV: ${ENV}
     ports:
       - 6789:6789

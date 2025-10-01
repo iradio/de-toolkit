@@ -1,6 +1,6 @@
-# de-toolkit is toolkit and sandbox for Data Engineers
-`de-toolkit` is a collection of open-source software designed for self-study as a data engineer. The kit is built on top of `docker` and `docker-compose`. 
-The repository contains docker-compose files that deploy products on the de-toolkit-network shared virtual network, as well as the necessary configuration files, initialization, and examples to demonstrate how the tools work.
+# de-toolkit: toolkit and sandbox for data engineers
+`de-toolkit` is a collection of open-source software designed to support self-study for data engineers. The kit is built on top of `docker` and `docker-compose`.
+The repository contains docker-compose files that deploy products on the shared `de-toolkit-network`, along with the configuration files, initialization routines, and examples required to demonstrate how each tool works.
 
 `de-toolkit` includes tools and systems from categories such as:
 - ETL / ELT
@@ -20,12 +20,12 @@ The repository contains docker-compose files that deploy products on the de-tool
 | [Airbyte](./airbyte) | 8100, 8101, 8102 | [http://localhost:8100](http://localhost:8100)|  l: `de_user`, p: `de_pass`  | airbyte* |
 | [Dagster](./dagster) | 8200 | [http://localhost:8200](http://localhost:8200)| *no auth* | dagster |
 | [Prefect2](./prefect2) | 4200 | [http://localhost:4200](http://localhost:4200) | *no auth* [Docs](https://docs.prefect.io/)  | prefect* |
-| [Spark](./spark) | 8400 | [http://localhost:8400](http://localhost:8400) | *no auth* use check [spark/readme.md](./spark/readme.md) | spark, `spark://spark:7077` |
+| [Spark](./spark) | 8400 | [http://localhost:8400](http://localhost:8400) | *no auth* — see [spark/readme.md](./spark/readme.md) | spark, `spark://spark:7077` |
 | [Cronicle](./cronicle) | 8500 |  [http://localhost:8500](http://localhost:8500) | l: `admin`, p: `admin`  | cronicle |
 | [Meltano](./meltano/) | 5000 | [http://localhost:5000](http://localhost:5000) | *no auth* | meltano* |
 | [Mage](./mage/) | 6789 | [http://localhost:6789](http://localhost:6789) | *no auth* | mage |
 | **Storage** |
-| [PostgresSQL](./postgresql) | 5432 |  `postgresql://de_user:de_pass@localhost:5432/de` | db: `de`, l: `de_user`, p: `de_pass` | postgresql | 
+| [PostgreSQL](./postgresql) | 5432 |  `postgresql://de_user:de_pass@localhost:5432/de` | db: `de`, l: `de_user`, p: `de_pass` | postgresql | 
 | [ClickHouse](./clickhouse/) | 8123, 9000 | [http://localhost:8123/play](http://localhost:8123/play), `clickhouse+http://de_user:de_pass@localhost:8123/de`, `clickhouse+native://de_user:de_pass@localhost:9000/de` | db: `de`, l: `de_user`, p: `de_pass` | clickhouse |
 | [MongoDB](./mongodb/) | 27017 | `mongodb://de_user:de_pass@localhost:27017/de` | db: `de`, l: `de_user`, p: `de_pass` | mongodb |
 | [Minio](./minio/) | 9001,9002 |  [http://localhost:9001](http://localhost:9001) | l: `de_user`, p: `de_password` | minio |
@@ -45,14 +45,14 @@ The repository contains docker-compose files that deploy products on the de-tool
 git clone https://github.com/iradio/de-toolkit.git
 cd de-toolkit
 ```
-Select the product and run it via `docker-compose`.  Some products should be launched with the build flag, so it's better to use it by default. For example, start `Postgres`.
+Select a product and run it via `docker-compose`. Some products must be launched with the build flag, so it is safer to use it by default. For example, to start PostgreSQL:
 ```bash
 cd postgresql
 docker-compose up -d --build
 ```
 
-All products starts with access to the same shared network `de-toolkit-network`, and are accessible by hostname matching the server name.
-For example: when connecting Postgresql to the Metabase product, you have to use hostname: `postgresql` as the DBMS address.
+All products start on the shared `de-toolkit-network` and are accessible via hostnames that match their service names.
+For example, when connecting PostgreSQL to Metabase, use the hostname `postgresql` as the database address.
 
 ## Requirements
 - `docker`
@@ -64,13 +64,13 @@ Mac - [Docker Desktop on Mac](https://docs.docker.com/desktop/install/mac-instal
 
 Linux - [Docker Desktop on Linux](https://docs.docker.com/desktop/install/linux-install/)
 
-Sufficient amount of available docker RAM. More than 8GB.
+Ensure Docker has more than 8 GB of memory available.
 
 How to check available docker memory:
 ``` bash
 docker run --rm "debian:bullseye-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))' 
 ```
-P.S.: tested on `Windows 10 Home 64 + Docker Desktop on WSL2` . Hardware: `Intel i7-10710U 64GB RAM SSD`
+Tested on `Windows 10 Home 64 + Docker Desktop on WSL2`. Hardware: `Intel i7-10710U 64GB RAM SSD`.
 
 
 ## Defaults 

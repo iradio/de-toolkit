@@ -1,5 +1,5 @@
 # Open Metadata
-Metadata management solution that includes data discovery, governance, data quality, observability, and people collaboration.
+Open Metadata is a metadata management solution that provides data discovery, governance, data quality, observability, and collaboration features.
 
 # How to use
 
@@ -8,7 +8,7 @@ Metadata management solution that includes data discovery, governance, data qual
 docker-compose up -d
 ```
 
-2. Run other services to ingest metadata from:
+2. Start additional services to ingest metadata from them:
 ```bash
 cd ../postgresql
 docker-compose up -d
@@ -18,7 +18,7 @@ cd ../metabase
 docker-compose up -d
 ```
 
-3. Set up connections to running services using Open Metadata UI.
+3. Configure connections to the running services through the Open Metadata UI.
 
 [Databases](http://localhost:8585/settings/services/databases)
 ![postgresql](./img/postgresql.png)
